@@ -3,13 +3,11 @@
 #include <iostream>
 #include "Dashboard.h"
 void Startup() {
-    Dashboard getDashboard = Dashboard();
-    std::cout << std::endl;
-    auto now = std::chrono::system_clock::now();
-    std::cout << now;
+    Dashboard DashboardInst = Dashboard();
+    //Talk about Privilege Levels
 }
 
 
 int main(){
-    Startup();
+  Startup();
 }
