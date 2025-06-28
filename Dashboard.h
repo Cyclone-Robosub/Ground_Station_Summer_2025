@@ -5,15 +5,17 @@
 
 class Dashboard {
 public:
-  Dashboard() {
+  Dashboard(
+      const std::chrono::steady_clock::time_point givenStartupTime)
+      : startuptime(givenStartupTime) {
     std::cout << "Startup time : " << startuptime << std::endl;
     (BatteryMonitor(startuptime));
   }
-  std::chrono::system_clock::time_point getStartupTime() { return startuptime; }
+  std::chrono::steady_clock::time_point getStartupTime() { return startuptime; }
   
 private:
-  const std::chrono::system_clock::time_point startuptime =
-      std::chrono::system_clock::now();
+  const auto startuptime =
+      std::chrono::steady_clock::now();
       //Setup subscriber to SOC Topic.
     UpdateDashboardValues();
     //Decide on Event Driven vs Real-Time System.
