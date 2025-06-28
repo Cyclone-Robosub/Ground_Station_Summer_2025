@@ -9,4 +9,6 @@ set(EXPORT_COMPILE_COMMANDS ON)
 
 add_executable(DashboardExecutable
     main.cpp
+    Dashboard.h
+    BatteryMonitor/BatteryMonitor.h
 )

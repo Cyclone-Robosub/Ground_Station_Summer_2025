@@ -1,5 +1,11 @@
 #include "BatteryMonitor.h"
-double BatteryMonitor::ReadSOC() {
+
+///
+
+
+/// @brief O(1)
+double BatteryMonitor::ReadSOC()
+{
   double currentCurrent;
   std::chrono::steady_clock::time_point timeFinal;
   const double currentRating = CURRENTRATING;
