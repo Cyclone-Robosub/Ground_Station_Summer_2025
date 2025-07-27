@@ -8,5 +8,6 @@ void Dashboard::Controller(){
 void Dashboard::getSOC(const std_msgs::msg::Float64::SharedPtr msg){
     SOC = msg->data;
     std::cout << SOC << std::endl;
+    //Need to setup GUI
 }
 
