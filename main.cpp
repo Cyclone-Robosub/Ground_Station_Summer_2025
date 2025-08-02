@@ -10,7 +10,9 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+#include "rclcpp/rclcpp.hpp"
 #include <stdio.h>
+#include "Dashboard.hpp"
 #define GL_SILENCE_DEPRECATION
 #if defined(IMGUI_IMPL_OPENGL_ES2)
 #include <GLES2/gl2.h>
@@ -38,12 +40,15 @@ static void glfw_error_callback(int error, const char* description)
 }
 
 // Main code
-int main(int, char**)
+int main(int argc, char *argv[])
 {
-    /*NEED TO UNCOMMENT THESE SOON*/
-  //rclcpp::init(argc, argv);
-  //rclcpp::spin(std::make_shared<Dashboard>());
+  rclcpp::init(argc, argv);
+    std::shared_ptr<Dashboard> node = std::make_shared<Dashboard>();
+    std::thread ROSThread([node]() {
+    rclcpp::spin(node);
+});
 
+  ROSThread.detach();
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit())
         return 1;
