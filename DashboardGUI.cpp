@@ -142,14 +142,16 @@ int DashboardGUI::Startup()
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-        
-        // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-        RenderStatusIndicators(io);
 
+        // Render status indicators
+        
+        RenderExampleIndicator(io);
+        
         static float battery_voltage = 12.0f; // Example initial value
         static float battery_threshold = 11.0f; // Example threshold value
         RenderBatteryMonitor(battery_voltage);
         
+        // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
         if (show_demo_window)
             ImGui::ShowDemoWindow(&show_demo_window);
 

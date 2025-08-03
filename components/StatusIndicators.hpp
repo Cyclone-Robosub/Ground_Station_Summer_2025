@@ -1,3 +1,3 @@
 #pragma once
 
-void RenderStatusIndicators(ImGuiIO& io);
+void RenderExampleIndicator(ImGuiIO& io);

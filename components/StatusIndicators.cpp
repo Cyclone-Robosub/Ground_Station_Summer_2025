@@ -1,7 +1,7 @@
 #include "imgui.h"
 #include "StatusIndicators.hpp"
 
-void RenderStatusIndicators(ImGuiIO& io) {
+void RenderExampleIndicator(ImGuiIO& io) {
     ImGui::Begin("Status Indicators");
 
     // Example status indicators
@@ -11,3 +11,5 @@ void RenderStatusIndicators(ImGuiIO& io) {
 
     ImGui::End();
 }
+
+// void RenderMasterStatusLight()
