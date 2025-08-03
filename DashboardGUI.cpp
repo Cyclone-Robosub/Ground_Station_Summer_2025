@@ -8,7 +8,7 @@
 // - Introduction, links and more at the top of imgui.cpp
 #include "DashboardGUI.hpp"
 #include "components/StatusIndicators.hpp"
-
+#include "components/BatteryMonitor.hpp"
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
 // To link with VS2010-era libraries, VS2015+ requires linking with legacy_stdio_definitions.lib, which we do using this pragma.
 // Your own project should not be affected, as you are likely to link with a newer binary of GLFW that is adequate for your version of Visual Studio.
@@ -145,6 +145,9 @@ int DashboardGUI::Startup()
         
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
         RenderStatusIndicators(io);
+
+        static float battery_voltage = 12.0f; // Example initial value
+        RenderBatteryMonitor(battery_voltage);
         
         if (show_demo_window)
             ImGui::ShowDemoWindow(&show_demo_window);

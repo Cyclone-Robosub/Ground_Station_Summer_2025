@@ -63,6 +63,8 @@ add_executable(DashboardExecutable
     DashboardGUI.cpp
     components/StatusIndicators.hpp
     components/StatusIndicators.cpp
+    components/BatteryMonitor.hpp
+    components/BatteryMonitor.cpp
     ${IMGUI_DIR}/imgui.cpp
     ${IMGUI_DIR}/imgui_demo.cpp
     ${IMGUI_DIR}/imgui_draw.cpp
