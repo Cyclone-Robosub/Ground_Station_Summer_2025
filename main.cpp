@@ -47,7 +47,6 @@ int main(int argc, char *argv[])
     std::thread ROSThread([node]() {
     rclcpp::spin(node);
 });
-std::cout << "here" << std::endl;
     ROSThread.detach();
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit())
