@@ -61,6 +61,8 @@ add_executable(DashboardExecutable
     Dashboard.hpp
     Dashboard.cpp
     DashboardGUI.cpp
+    StatusIndicators.hpp
+    StatusIndicators.cpp
     ${IMGUI_DIR}/imgui.cpp
     ${IMGUI_DIR}/imgui_demo.cpp
     ${IMGUI_DIR}/imgui_draw.cpp
