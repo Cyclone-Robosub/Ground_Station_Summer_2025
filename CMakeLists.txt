@@ -60,6 +60,7 @@ add_executable(DashboardExecutable
     main.cpp
     Dashboard.hpp
     Dashboard.cpp
+    DashboardGUI.cpp
     ${IMGUI_DIR}/imgui.cpp
     ${IMGUI_DIR}/imgui_demo.cpp
     ${IMGUI_DIR}/imgui_draw.cpp

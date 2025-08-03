@@ -10,5 +10,6 @@ colon build
 ```
 Run the excutable
 ```bash
-build/dashboard_project/DashboardExecutable
+cd build/dashboard_project
+./DashboardExecutable
 ```
