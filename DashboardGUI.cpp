@@ -146,6 +146,8 @@ int DashboardGUI::Startup()
         // Render status indicators
         
         RenderExampleIndicator(io);
+
+        RenderStatusIndicators();
         
         static float battery_voltage = 12.0f; // Example initial value
         static float battery_threshold = 11.0f; // Example threshold value
