@@ -2,12 +2,9 @@
 
 #include <string>
 
-//Example - Not for production use
+// Example - Not for production use
 void RenderExampleIndicator(ImGuiIO& io);
 
-// Status code to string conversion
-std::string StatusCodeToString(int status_code);
-
-void MasterStatusLight(int& master_status);
-void SystemStatusLight(int& system_status);
+void MasterStatusLight(const std::string& master_status);
+void SystemStatusLight(const std::string& system_status);
 void RenderStatusIndicators();
