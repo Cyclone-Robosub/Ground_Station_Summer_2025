@@ -149,7 +149,7 @@ int DashboardGUI::Startup()
         
         static float battery_voltage = 12.0f; // Example initial value
         static float battery_threshold = 11.0f; // Example threshold value
-        RenderBatteryMonitor(battery_voltage);
+        RenderBatteryMonitor(battery_voltage, battery_threshold);
         
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
         if (show_demo_window)
