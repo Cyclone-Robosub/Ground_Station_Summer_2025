@@ -1,6 +1,9 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/bool.hpp"
 #include "std_msgs/msg/float64.hpp"
+#include "std_msgs/msg/float32_multi_array.hpp"
+#include "std_msgs/msg/int64.hpp"
+#include "std_msgs/msg/string.hpp"
 #include <chrono>
 #include <iostream>
 #include <thread>
@@ -15,7 +18,7 @@ public:
   }
   std::atomic<float> SOC;
   std::atomic<bool> SOCint{false};
-  std::atomic<std::string> CurrentTask;
+  std::atomic<std::shared_ptr<std::string>> CurrentTask;
   std::atomic<int> ManipulationCode;
 private:
   void SetupROS();

@@ -1,11 +1,10 @@
 #include "rclcpp/rclcpp.hpp"
-#include "Dashboard.hpp"
-#include "DashboardGUI.cpp"
+#include "DashboardGUI.hpp"
 int main(int argc, char *argv[]) {
   rclcpp::init(argc, argv);
-  std::shared_ptr<Dashboard> node = std::make_shared<Dashboard>();
-  std::thread ROSThread([node]() { rclcpp::spin(node); });
+  std::shared_ptr<Dashboard> DashboardPtr = std::make_shared<Dashboard>();
+  std::thread ROSThread([DashboardPtr]() { rclcpp::spin(DashboardPtr); });
   ROSThread.detach();
-  std::thread GUIThread(Startup);
-  GUIThread.detach();
+  DashboardGUI DashboardGUIObject = DashboardGUI(DashboardPtr);
+  DashboardGUIObject.Startup();
 }
