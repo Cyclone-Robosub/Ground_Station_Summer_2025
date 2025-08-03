@@ -1,12 +1,13 @@
 #include "imgui.h"
 #include "BatteryMonitor.hpp"
 
-void RenderBatteryMonitor(float& battery_voltage) {
+void RenderBatteryMonitor(float& battery_voltage, float& battery_threshold) {
     ImGui::Begin("Battery Monitor");
 
     // Display the battery voltage
     ImGui::Text("Battery Voltage: %.2f V", battery_voltage);
-    ImGui::Text("Battery Status: %s", (battery_voltage > 11.0f) ? "Good" : "Low");
+    //TODO: Add coloring
+    ImGui::Text("Battery Status: %s", (battery_voltage > battery_threshold) ? "Good" : "Low");
 
     // Example voltage history data
     constexpr int history_size = 200;
