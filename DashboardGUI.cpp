@@ -150,28 +150,10 @@ int DashboardGUI::Startup()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        // Render status indicators
-        
-        RenderExampleIndicator(io);
-
-        // Sample data for status indicators
-        std::string master_status = "success";
-        std::vector<SystemStatus> system_statuses = {
-            {"success", "System 1 is connected"},
-            {"warning", "System 2 has low battery"},
-            {"error", "System 3 failed to start"}
-        };
-
-        // Render status indicators with sample data
-        RenderStatusIndicators(master_status, system_statuses);
-        
-        static float battery_voltage = 12.0f; // Example initial value
-        static float battery_threshold = 11.0f; // Example threshold value
-        RenderBatteryMonitor(battery_voltage, battery_threshold);
         
         // Sample data for message logger
         static std::map<std::string, SystemLog> message_log;
-
+        
         // Initialize logger with blank messages for each system (only once)
         // This should be moved to Dashboard.cpp for initialization
         static bool logger_initialized = false;
@@ -188,7 +170,7 @@ int DashboardGUI::Startup()
             };
             logger_initialized = true;
         }
-
+        
         // Dynamic test messages
         static std::vector<std::string> manipulation_messages = {
             "Manipulator initialized",
@@ -205,7 +187,7 @@ int DashboardGUI::Startup()
         static size_t manip_idx = 0;
         static size_t vision_idx = 0;
         static auto last_update = std::chrono::steady_clock::now();
-
+        
         auto now = std::chrono::steady_clock::now();
         if (std::chrono::duration_cast<std::chrono::seconds>(now - last_update).count() >= 2) {
             AddSystemMessage(message_log, "Manipulation", manipulation_messages[manip_idx]);
@@ -217,8 +199,51 @@ int DashboardGUI::Startup()
 
         // Render message logger
         RenderMessageLogger(message_log);
+        
+        // Render status indicators
+        
+        // RenderExampleIndicator(io);
 
+        // Sample data for status indicators
+        static std::vector<std::string> master_statuses = {
+            "success", "warning", "error"
+        };
+        static std::vector<SystemStatus> system_statuses_set[] = {
+            {
+                {"success", "System 1 is connected"},
+                {"warning", "System 2 has low battery"},
+                {"error", "System 3 failed to start"}
+            },
+            {
+                {"warning", "System 1 voltage low"},
+                {"success", "System 2 is connected"},
+                {"success", "System 3 is running"}
+            },
+            {
+                {"error", "System 1 failed"},
+                {"error", "System 2 failed"},
+                {"success", "System 3 is connected"}
+            }
+        };
+        static size_t status_idx = 0;
+        static auto last_status_update = std::chrono::steady_clock::now();
 
+        auto now_status = std::chrono::steady_clock::now();
+        if (std::chrono::duration_cast<std::chrono::seconds>(now_status - last_status_update).count() >= 2) {
+            status_idx = (status_idx + 1) % 3;
+            last_status_update = now_status;
+        }
+
+        std::string master_status = master_statuses[status_idx];
+        std::vector<SystemStatus> system_statuses = system_statuses_set[status_idx];
+
+        // Render status indicators with sample data
+        RenderStatusIndicators(master_status, system_statuses);
+        
+        static float battery_voltage = 12.0f; // Example initial value
+        static float battery_threshold = 11.0f; // Example threshold value
+        RenderBatteryMonitor(battery_voltage, battery_threshold);
+        
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
         if (show_demo_window)
             ImGui::ShowDemoWindow(&show_demo_window);
