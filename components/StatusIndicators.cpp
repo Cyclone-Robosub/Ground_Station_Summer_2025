@@ -17,6 +17,7 @@ void MasterStatusLight(const std::string& master_status) {
     ImGui::Text("Master Status: %s", master_status.c_str());
 }
 
+// TODO: Implement the rendering logic for system status indicators
 void SystemStatusLight(const SystemStatus& system_status) {
     ImGui::Text("Status: %s", system_status.status.c_str());
     ImGui::Text("Message: %s", system_status.message.c_str());
