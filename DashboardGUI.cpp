@@ -172,16 +172,30 @@ int DashboardGUI::Startup()
         // Sample data for message logger
         static std::map<std::string, SystemLog> message_log;
 
-        // Add some sample messages for testing (only once)
-        static bool initialized = false;
-        if (!initialized) {
-            AddSystemMessage(message_log, "Manipulation", "Manipulator initialized");
-            AddSystemMessage(message_log, "Manipulation", "Manipulator ready");
-            AddSystemMessage(message_log, "Manipulation", "Manipulator error: joint overload");
-            AddSystemMessage(message_log, "Vision", "Vision system online");
-            AddSystemMessage(message_log, "Vision", "Vision system detected object");
-            AddSystemMessage(message_log, "Vision", "Vision system lost tracking");
-            initialized = true;
+        // Dynamic test messages
+        static std::vector<std::string> manipulation_messages = {
+            "Manipulator initialized",
+            "Manipulator ready",
+            "Manipulator error: joint overload",
+            "Manipulator recovered"
+        };
+        static std::vector<std::string> vision_messages = {
+            "Vision system online",
+            "Vision system detected object",
+            "Vision system lost tracking",
+            "Vision system reacquired target"
+        };
+        static size_t manip_idx = 0;
+        static size_t vision_idx = 0;
+        static auto last_update = std::chrono::steady_clock::now();
+
+        auto now = std::chrono::steady_clock::now();
+        if (std::chrono::duration_cast<std::chrono::seconds>(now - last_update).count() >= 2) {
+            AddSystemMessage(message_log, "Manipulation", manipulation_messages[manip_idx]);
+            AddSystemMessage(message_log, "Vision", vision_messages[vision_idx]);
+            manip_idx = (manip_idx + 1) % manipulation_messages.size();
+            vision_idx = (vision_idx + 1) % vision_messages.size();
+            last_update = now;
         }
 
         // Render message logger
