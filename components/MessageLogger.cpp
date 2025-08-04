@@ -5,6 +5,8 @@
 #include <sstream>
 #include <ctime>
 
+// int horizonal_message_offsets[] = {80, 280};
+
 // Utility: Format timestamp as string
 std::string FormatTimestamp(const std::chrono::system_clock::time_point& tp) {
     std::time_t t = std::chrono::system_clock::to_time_t(tp);
@@ -33,17 +35,19 @@ void AddSystemMessage(std::map<std::string, SystemLog>& system_logs, const std::
 
 // Display the most recent message for a system
 void DisplayCurrentMessage(const SystemLog& log) {
-    ImGui::TextColored(ImVec4(0.8f, 1.0f, 0.8f, 1.0f), "Current: %s", log.current_message.text.c_str());
-    ImGui::SameLine();
+    auto text_color = ImVec4(0.8f, 1.0f, 0.8f, 1.0f); // Light green for current message
     ImGui::TextDisabled("[%s]", FormatTimestamp(log.current_message.timestamp).c_str());
+    ImGui::SameLine();
+    ImGui::TextColored(text_color, "%s", log.current_message.text.c_str());
+    // ImGui::PushFont(NULL, 200.0f); // Use default font for current message
 }
 
 // Display up to three prior messages for a system
 void DisplayPriorMessages(const SystemLog& log) {
     for (size_t i = 0; i < log.prior_messages.size(); ++i) {
-        ImGui::Text("Previous %zu: %s", i + 1, log.prior_messages[i].text.c_str());
-        ImGui::SameLine();
         ImGui::TextDisabled("[%s]", FormatTimestamp(log.prior_messages[i].timestamp).c_str());
+        ImGui::SameLine();
+        ImGui::Text("%s",log.prior_messages[i].text.c_str());
     }
 }
 
