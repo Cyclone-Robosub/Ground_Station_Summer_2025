@@ -240,8 +240,21 @@ int DashboardGUI::Startup()
         // Render status indicators with sample data
         RenderStatusIndicators(master_status, system_statuses);
         
+        // Battery voltage test data
+        static std::vector<float> battery_voltages = {12.0f, 14.5f, 10.8f, 16.0f, 11.2f, 13.3f};
+        static size_t battery_idx = 0;
+        static auto last_battery_update = std::chrono::steady_clock::now();
+
+        auto now_battery = std::chrono::steady_clock::now();
+        // For battery voltage
+        if (std::chrono::duration_cast<std::chrono::milliseconds>(now_battery - last_battery_update).count() >= 50) {
+            battery_idx = (battery_idx + 1) % battery_voltages.size();
+            last_battery_update = now_battery;
+        }
         static float battery_voltage = 12.0f; // Example initial value
-        static float battery_threshold = 11.0f; // Example threshold value
+        battery_voltage = battery_voltages[battery_idx];
+
+        static float battery_threshold = 12.0f; // Example threshold value
         RenderBatteryMonitor(battery_voltage, battery_threshold);
         
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).

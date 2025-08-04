@@ -18,9 +18,9 @@ void RenderBatteryMonitor(float& battery_voltage, float& battery_threshold) {
     voltage_history[history_index] = battery_voltage;
     history_index = (history_index + 1) % history_size;
 
-    ImGui::PlotLines("Voltage History", voltage_history, history_size, history_index, nullptr, 0.0f, 12.0f, ImVec2(0, 80));
+    ImGui::PlotLines("Voltage History", voltage_history, history_size, history_index, nullptr, 0.0f, 16.0f, ImVec2(0, 80));
     // Example of a slider to adjust the battery voltage (for demonstration purposes)
-    ImGui::SliderFloat("Adjust Voltage", &battery_voltage, 0.0f, 12.0f);
+    // ImGui::SliderFloat("Adjust Voltage", &battery_voltage, 0.0f, 12.0f);
 
     ImGui::End();
 }
