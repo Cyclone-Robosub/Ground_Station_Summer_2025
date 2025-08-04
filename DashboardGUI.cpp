@@ -210,19 +210,19 @@ int DashboardGUI::Startup()
         };
         static std::vector<SystemStatus> system_statuses_set[] = {
             {
-                {"success", "System 1 is connected"},
-                {"warning", "System 2 has low battery"},
-                {"error", "System 3 failed to start"}
+                {"State Saver", "success", "System 1 is connected"},
+                {"Robot Operations", "warning", "System 2 has low battery"},
+                {"Hardwar Status", "error", "System 3 failed to start"}
             },
             {
-                {"warning", "System 1 voltage low"},
-                {"success", "System 2 is connected"},
+                {"State Saver", "warning", "System 1 voltage low"},
+                {"Robot Operations", "success", "System 2 is connected"},
                 {"success", "System 3 is running"}
             },
             {
-                {"error", "System 1 failed"},
-                {"error", "System 2 failed"},
-                {"success", "System 3 is connected"}
+                {"State Saver", "error", "System 1 failed"},
+                {"Robot Operations", "error", "System 2 failed"},
+                {"Hardwar Status", "success", "System 3 is connected"}
             }
         };
         static size_t status_idx = 0;

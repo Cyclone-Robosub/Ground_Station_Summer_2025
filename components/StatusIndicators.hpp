@@ -4,6 +4,7 @@
 #include <vector>
 
 struct SystemStatus {
+    std::string name;     // Name of the system (e.g., "Manipulator", "Vision")
     std::string status;   // "error", "warning", "success"
     std::string message;  // e.g., "system is connected"
 };
@@ -11,6 +12,4 @@ struct SystemStatus {
 // Example - Not for production use
 void RenderExampleIndicator(ImGuiIO& io);
 
-void MasterStatusLight(const std::string& master_status);
-void SystemStatusLight(const SystemStatus& system_status);
 void RenderStatusIndicators(const std::string& master_status, const std::vector<SystemStatus>& system_statuses);

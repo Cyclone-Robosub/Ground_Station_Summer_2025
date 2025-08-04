@@ -15,31 +15,34 @@ void RenderExampleIndicator(ImGuiIO& io) {
 
 // Utility function to get color for status string
 ImVec4 StatusToColor(const std::string& status) {
-    if (status == "success")      return ImVec4(0.0f, 1.0f, 0.0f, 1.0f); // Green
-    else if (status == "error")   return ImVec4(1.0f, 0.0f, 0.0f, 1.0f); // Red
-    else if (status == "warning") return ImVec4(1.0f, 1.0f, 0.0f, 1.0f); // Yellow
+    if (status == "success")      
+        return ImVec4(0.0f, 1.0f, 0.0f, 1.0f); // Green
+    else if (status == "error")   
+        return ImVec4(1.0f, 0.0f, 0.0f, 1.0f); // Red
+    else if (status == "warning") 
+        return ImVec4(1.0f, 1.0f, 0.0f, 1.0f); // Yellow
     return ImVec4(0.5f, 0.5f, 0.5f, 1.0f); // Gray for unknown
 }
 
 // Render a status light (filled circle) and label
-void RenderStatusLight(const std::string& status, const char* label) {
+void RenderStatusLight(const std::string& status, const char* label, float radius) {
     ImVec2 pos = ImGui::GetCursorScreenPos();
     ImVec4 color = StatusToColor(status);
-    float radius = 7.0f;
     ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2(pos.x + radius, pos.y + radius), radius, ImGui::GetColorU32(color));
     ImGui::Dummy(ImVec2(radius * 2, radius * 2)); // Reserve space for the circle
     ImGui::SameLine();
-    ImGui::Text("%s", label);
+    // ImGui::Text("%s", label);
 }
 
 // Master status with indicator light
 void MasterStatusLight(const std::string& master_status) {
-    RenderStatusLight(master_status, ("Master Status: " + master_status).c_str());
+    RenderStatusLight(master_status, ("Master Status: " + master_status).c_str(), 12.0f);
+    ImGui::Text("Master Status: %s", master_status.c_str());
 }
 
 // System status with indicator light and message
 void SystemStatusLight(const SystemStatus& system_status) {
-    RenderStatusLight(system_status.status, ("Status: " + system_status.status).c_str());
+    RenderStatusLight(system_status.status, (system_status.name + ": " + system_status.status).c_str(), 8.0f);
     ImGui::Text("Message: %s", system_status.message.c_str());
 }
 
@@ -49,9 +52,9 @@ void RenderStatusIndicators(const std::string& master_status, const std::vector<
     MasterStatusLight(master_status);
 
     for (size_t i = 0; i < system_statuses.size(); ++i) {
-        ImGui::Separator();
-        ImGui::Text("System %zu:", i + 1);
-        SystemStatusLight(system_statuses[i]);
+        if (ImGui::CollapsingHeader(system_statuses[i].name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+            SystemStatusLight(system_statuses[i]);
+        }
     }
 
     ImGui::End();
