@@ -9,6 +9,8 @@
 #include "DashboardGUI.hpp"
 #include "components/StatusIndicators.hpp"
 #include "components/BatteryMonitor.hpp"
+#include <string>
+#include <vector>
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
 // To link with VS2010-era libraries, VS2015+ requires linking with legacy_stdio_definitions.lib, which we do using this pragma.
 // Your own project should not be affected, as you are likely to link with a newer binary of GLFW that is adequate for your version of Visual Studio.
@@ -147,7 +149,16 @@ int DashboardGUI::Startup()
         
         RenderExampleIndicator(io);
 
-        RenderStatusIndicators();
+        // Sample data for status indicators
+        std::string master_status = "success";
+        std::vector<SystemStatus> system_statuses = {
+            {"success", "System 1 is connected"},
+            {"warning", "System 2 has low battery"},
+            {"error", "System 3 failed to start"}
+        };
+
+        // Render status indicators with sample data
+        RenderStatusIndicators(master_status, system_statuses);
         
         static float battery_voltage = 12.0f; // Example initial value
         static float battery_threshold = 11.0f; // Example threshold value

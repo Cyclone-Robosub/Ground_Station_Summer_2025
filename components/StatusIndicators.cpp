@@ -1,6 +1,7 @@
 #include "imgui.h"
 #include "StatusIndicators.hpp"
 #include <string>
+#include <vector>
 
 
 void RenderExampleIndicator(ImGuiIO& io) {
@@ -16,17 +17,21 @@ void MasterStatusLight(const std::string& master_status) {
     ImGui::Text("Master Status: %s", master_status.c_str());
 }
 
-void SystemStatusLight(const std::string& system_status) {
-    ImGui::Text("System Status: %s", system_status.c_str());
+void SystemStatusLight(const SystemStatus& system_status) {
+    ImGui::Text("Status: %s", system_status.status.c_str());
+    ImGui::Text("Message: %s", system_status.message.c_str());
 }
 
-void RenderStatusIndicators() {
+void RenderStatusIndicators(const std::string& master_status, const std::vector<SystemStatus>& system_statuses) {
     ImGui::Begin("System Status Indicators");
 
-    static std::string master_status = "warning"; // Example status string
-    static std::string system_status = "error";   // Example status string
     MasterStatusLight(master_status);
-    SystemStatusLight(system_status);
+
+    for (size_t i = 0; i < system_statuses.size(); ++i) {
+        ImGui::Separator();
+        ImGui::Text("System %zu:", i + 1);
+        SystemStatusLight(system_statuses[i]);
+    }
 
     ImGui::End();
 }
