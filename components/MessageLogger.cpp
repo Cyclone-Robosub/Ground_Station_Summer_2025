@@ -27,7 +27,7 @@ void AddSystemMessage(std::map<std::string, SystemLog>& system_logs, const std::
     // Move current to prior, push new as current
     if (!log.current_message.text.empty()) {
         log.prior_messages.insert(log.prior_messages.begin(), log.current_message);
-        if (log.prior_messages.size() > 3)
+        if (log.prior_messages.size() > 3) // Change this to change number of entries
             log.prior_messages.pop_back();
     }
     log.current_message = new_msg;
@@ -56,10 +56,14 @@ void RenderMessageLogger(const std::map<std::string, SystemLog>& system_logs) {
     ImGui::Begin("System Message Logger");
 
     for (const auto& [system_name, log] : system_logs) {
-        ImGui::Separator();
-        ImGui::TextColored(ImVec4(0.7f, 0.9f, 1.0f, 1.0f), "%s", system_name.c_str());
-        DisplayCurrentMessage(log);
-        DisplayPriorMessages(log);
+      // ImGui::TextColored(ImVec4(0.7f, 0.9f, 1.0f, 1.0f), "%s", system_name.c_str());
+      if (ImGui::CollapsingHeader(system_name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+          DisplayCurrentMessage(log);
+          ImGui::Separator();
+          DisplayPriorMessages(log);
+
+        }
+            // return;
     }
 
     ImGui::End();
