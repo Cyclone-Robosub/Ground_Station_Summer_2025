@@ -13,3 +13,9 @@ Run the excutable
 cd build/dashboard_project
 ./DashboardExecutable
 ```
+Or alternatively 
+```
+build/dashboard_project/DashboardExecutable
+```
+## Resources
+- [Interactable Demo Site](https://pthom.github.io/imgui_manual_online/manual/imgui_manual.html)
