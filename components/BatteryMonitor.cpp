@@ -27,9 +27,9 @@ void RenderBatteryMonitor(float& battery_voltage, float& battery_threshold, floa
     //Battery Current
     static float current_history[history_size] = {0};
     static int current_history_index = 0;
-    ImGui::Begin("Battery Current");
-     ImGui::Text("Battery Statue of Charge: %.2f V", battery_current);
-     ImGui::Text("Battery Status: %s", (isSOCINT) ? "LOW Battery Charge" : "Good");
+    ImGui::Begin("Battery Percentage");
+     ImGui::Text("Battery Statue of Charge: %.2f %", battery_current);
+     ImGui::Text("Battery Status: %s", (isSOCINT) ? "LOW Battery SOC" : "Good");
      current_history[current_history_index] = battery_current;
      current_history_index = (current_history_index + 1) % history_size;
       ImGui::PlotLines("Current History", current_history, history_size, current_history_index, nullptr, 0.0f, 16.0f, ImVec2(0, 80));
