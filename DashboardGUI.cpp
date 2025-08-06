@@ -222,7 +222,7 @@ int DashboardGUI::Startup()
             {
                 {"State Saver", "error", "System 1 failed"},
                 {"Robot Operations", "error", "System 2 failed"},
-                {"Hardwar Status", "success", "System 3 is connected"}
+                {"Hardware Status", "success", "System 3 is connected"}
             }
         };
         static size_t status_idx = 0;
