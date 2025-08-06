@@ -58,8 +58,8 @@ endif()
 
 add_executable(DashboardExecutable
     main.cpp
-    Dashboard.hpp
-    Dashboard.cpp
+    DashboardController.hpp
+    DashboardController.cpp
     DashboardGUI.cpp
     components/StatusIndicators.hpp
     components/StatusIndicators.cpp

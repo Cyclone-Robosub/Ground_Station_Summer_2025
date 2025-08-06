@@ -155,7 +155,7 @@ int DashboardGUI::Startup()
         static std::map<std::string, SystemLog> message_log;
         
         // Initialize logger with blank messages for each system (only once)
-        // This should be moved to Dashboard.cpp for initialization
+        // This should be moved to DashboardController.cpp for initialization
         static bool logger_initialized = false;
         if (!logger_initialized) {
             message_log["Manipulation"] = SystemLog{

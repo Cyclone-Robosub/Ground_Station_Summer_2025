@@ -12,9 +12,9 @@
 /// @todo : multithreadexecutor for multiple subscribers.
 ///         Subscription Options
 ///         
-class Dashboard : public rclcpp::Node {
+class DashboardController : public rclcpp::Node {
 public:
-  Dashboard() : Node("DashboardNode") {
+  DashboardController() : Node("DashboardNode") {
     SetupROS();
   }
   std::atomic<float> SOC;
