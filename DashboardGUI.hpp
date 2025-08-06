@@ -12,7 +12,7 @@ class DashboardGUI{
     public:
     DashboardGUI(std::shared_ptr<Dashboard> givenDashboardPointer) : DashboardPointer(givenDashboardPointer) {
         DashboardControllerThread = std::jthread(&Dashboard::Controller, DashboardPointer.get());
-        std::cout << "confirm got out of constructor" << std::endl;
+        std::cout << "confirm got out of GUI constructor" << std::endl;
     };
     int Startup();
     private:

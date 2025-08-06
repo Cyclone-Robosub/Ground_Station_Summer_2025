@@ -7,4 +7,5 @@ int main(int argc, char *argv[]) {
   ROSThread.detach();
   DashboardGUI DashboardGUIObject = DashboardGUI(DashboardPtr);
   DashboardGUIObject.Startup();
+  rclcpp::shutdown();
 }

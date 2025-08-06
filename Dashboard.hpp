@@ -22,8 +22,10 @@ public:
   std::atomic<std::shared_ptr<std::string>> CurrentTask;
   std::atomic<int> ManipulationCode;
   void Controller();
+  void Shutdown();
 private:
   void SetupROS();
+  rclcpp::CallbackGroup::SharedPtr callbackBattery;
   rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr SOCsub;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr SOCINTsub;
   rclcpp::Subscription<std_msgs::msg::Float32MultiArray>::SharedPtr WaypointSub;
@@ -36,4 +38,5 @@ private:
   void getCurrentTask(const std_msgs::msg::String::SharedPtr msg);
   void getMainipulation(const std_msgs::msg::Int64::SharedPtr msg);
   bool isRobotRunning;
+  std::atomic<bool> isControllerShutdown{false};
 };

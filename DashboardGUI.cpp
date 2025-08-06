@@ -223,6 +223,8 @@ int DashboardGUI::Startup()
                 {"State Saver", "error", "System 1 failed"},
                 {"Robot Operations", "error", "System 2 failed"},
                 {"Hardware Status", "success", "System 3 is connected"}
+            },
+            {
             }
         };
         static size_t status_idx = 0;
@@ -238,6 +240,7 @@ int DashboardGUI::Startup()
         std::vector<SystemStatus> system_statuses = system_statuses_set[status_idx];
 
         // Render status indicators with sample data
+
         RenderStatusIndicators(master_status, system_statuses);
         
         // Battery voltage test data
@@ -255,7 +258,7 @@ int DashboardGUI::Startup()
         battery_voltage = battery_voltages[battery_idx];
 
         static float battery_threshold = 12.0f; // Example threshold value
-        RenderBatteryMonitor(battery_voltage, battery_threshold);
+        RenderBatteryMonitor(battery_voltage, battery_threshold, DashboardPointer->SOC.load(std::memory_order_acquire),DashboardPointer->SOCint.load(std::memory_order_acquire));
         
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
         if (show_demo_window)
@@ -316,6 +319,6 @@ int DashboardGUI::Startup()
 
     glfwDestroyWindow(window);
     glfwTerminate();
-
+    DashboardPointer->Shutdown();
     return 0;
 }

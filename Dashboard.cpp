@@ -1,14 +1,22 @@
 #include "Dashboard.hpp"
 void Dashboard::SetupROS(){
-    
-    SOCsub = this->create_subscription<std_msgs::msg::Float64>("SOCTopic", 10, std::bind(&Dashboard::getSOC, this, std::placeholders::_1));
-     SOCINTsub = this->create_subscription<std_msgs::msg::Bool>("SOCINTTopic", 10, std::bind(&Dashboard::getSOCINT, this, std::placeholders::_1));
+     callbackBattery = this->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+
+  auto VoltageOptions = rclcpp::SubscriptionOptions();
+  VoltageOptions.callback_group = callbackBattery;
+
+  auto CurrentOptions = rclcpp::SubscriptionOptions();
+  CurrentOptions.callback_group = callbackBattery;
+ auto CurrentINTOptions = rclcpp::SubscriptionOptions();
+ CurrentINTOptions.callback_group = callbackBattery;
+    SOCsub = this->create_subscription<std_msgs::msg::Float64>("SOCTopic", 10, std::bind(&Dashboard::getSOC, this, std::placeholders::_1), CurrentOptions);
+     SOCINTsub = this->create_subscription<std_msgs::msg::Bool>("SOCIntTopic", 10, std::bind(&Dashboard::getSOCINT, this, std::placeholders::_1), CurrentINTOptions);
     //manipulation
     //Vision
     
 }
 void Dashboard::Controller(){
-    while(true){
+    while(!isControllerShutdown.load()){
         //Robot not Running
     if(CurrentTask.load(std::memory_order_acquire) != nullptr){
         isRobotRunning = true;
@@ -18,7 +26,7 @@ void Dashboard::Controller(){
         //If SOC INT is true -> push it out Red on main light.
 
         //if Everything is good push it out all green.
-        //I suggest having a color class of all lights that have string member var to specify the type.
+    
     }
     }
 
@@ -31,4 +39,7 @@ void Dashboard::getSOC(const std_msgs::msg::Float64::SharedPtr msg){
 }
 void Dashboard::getSOCINT(const std_msgs::msg::Bool::SharedPtr msg){
     SOCint.store(msg->data, std::memory_order_release);
+}
+void Dashboard::Shutdown(){
+    isControllerShutdown = true;
 }
