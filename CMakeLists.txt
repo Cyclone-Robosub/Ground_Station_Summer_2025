@@ -27,17 +27,17 @@ find_package(OpenGL REQUIRED)
 
 # --- ImGui Library ---
 add_library(imgui STATIC
-    imgui-master/imgui.cpp
-    imgui-master/imgui_demo.cpp
-    imgui-master/imgui_draw.cpp
-    imgui-master/imgui_tables.cpp
-    imgui-master/imgui_widgets.cpp
-    imgui-master/backends/imgui_impl_glfw.cpp
-    imgui-master/backends/imgui_impl_opengl3.cpp
+    imgui/imgui.cpp
+    imgui/imgui_demo.cpp
+    imgui/imgui_draw.cpp
+    imgui/imgui_tables.cpp
+    imgui/imgui_widgets.cpp
+    imgui/backends/imgui_impl_glfw.cpp
+    imgui/backends/imgui_impl_opengl3.cpp
 )
 target_include_directories(imgui PUBLIC
-    ${PROJECT_SOURCE_DIR}/imgui-master
-    ${PROJECT_SOURCE_DIR}/imgui-master/backends
+    ${PROJECT_SOURCE_DIR}/imgui
+    ${PROJECT_SOURCE_DIR}/imgui/backends
 )
 target_compile_definitions(imgui PRIVATE IMGUI_IMPL_OPENGL_LOADER_GLAD)
 target_link_libraries(imgui PUBLIC glfw OpenGL::GL)
@@ -50,7 +50,7 @@ add_library(implot STATIC
 )
 target_include_directories(implot PUBLIC
     ${PROJECT_SOURCE_DIR}/implot
-    ${PROJECT_SOURCE_DIR}/imgui-master
+    ${PROJECT_SOURCE_DIR}/imgui
 )
 target_link_libraries(implot PUBLIC imgui)
 
@@ -63,7 +63,7 @@ add_library(implot3d STATIC
 target_include_directories(implot3d PUBLIC
     ${PROJECT_SOURCE_DIR}/implot3d
     ${PROJECT_SOURCE_DIR}/implot
-    ${PROJECT_SOURCE_DIR}/imgui-master
+    ${PROJECT_SOURCE_DIR}/imgui
 )
 target_link_libraries(implot3d PUBLIC implot)
 
