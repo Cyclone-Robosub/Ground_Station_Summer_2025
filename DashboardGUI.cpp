@@ -11,6 +11,7 @@
 #include "components/BatteryMonitor.hpp"
 #include "components/MessageLogger.hpp"
 #include "components/ConfigurationPanel.hpp"
+#include "components/RobotPlotting.hpp"
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -200,6 +201,8 @@ int DashboardGUI::Startup()
         }
 
         RenderMessageLogger(message_log);
+
+        DemoLinePlots();
 
         // Sample data for status indicators
         static std::vector<std::string> master_statuses = {

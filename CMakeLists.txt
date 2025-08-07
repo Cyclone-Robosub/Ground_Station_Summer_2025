@@ -1,19 +1,16 @@
 cmake_minimum_required(VERSION 3.20)
 project(dashboard_project)
 
-set(IMGUI_DIR imgui-master)
-set(IMPLOT_DIR implot)
-set(IMPLOT3D_DIR implot3d)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(EXPORT_COMPILE_COMMANDS ON)
+
+# -------------------------------------------------------------------------------------------------
+# ROS 2 Dependencies
+# -------------------------------------------------------------------------------------------------
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
-
-# Find and link GLFW
-find_package(PkgConfig REQUIRED)
-pkg_search_module(GLFW REQUIRED glfw3)
 find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
@@ -21,99 +18,95 @@ find_package(diagnostic_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(Threads REQUIRED)
-# Add include directories
-include_directories(
-    ${IMGUI_DIR}
-    ${IMGUI_DIR}/backends
-    ${IMPLOT_DIR}
-    ${IMPLOT3D_DIR}
+
+# -------------------------------------------------------------------------------------------------
+# Third-Party Dependencies (not in separate CMake projects)
+# -------------------------------------------------------------------------------------------------
+find_package(glfw3 3.3 REQUIRED)
+find_package(OpenGL REQUIRED)
+
+# --- ImGui Library ---
+add_library(imgui STATIC
+    imgui-master/imgui.cpp
+    imgui-master/imgui_demo.cpp
+    imgui-master/imgui_draw.cpp
+    imgui-master/imgui_tables.cpp
+    imgui-master/imgui_widgets.cpp
+    imgui-master/backends/imgui_impl_glfw.cpp
+    imgui-master/backends/imgui_impl_opengl3.cpp
 )
+target_include_directories(imgui PUBLIC
+    ${PROJECT_SOURCE_DIR}/imgui-master
+    ${PROJECT_SOURCE_DIR}/imgui-master/backends
+)
+target_compile_definitions(imgui PRIVATE IMGUI_IMPL_OPENGL_LOADER_GLAD)
+target_link_libraries(imgui PUBLIC glfw OpenGL::GL)
 
+# --- ImPlot Library ---
+add_library(implot STATIC
+    implot/implot.cpp
+    implot/implot_items.cpp
+    implot/implot_demo.cpp
+)
+target_include_directories(implot PUBLIC
+    ${PROJECT_SOURCE_DIR}/implot
+    ${PROJECT_SOURCE_DIR}/imgui-master
+)
+target_link_libraries(implot PUBLIC imgui)
 
-include_directories(${GLFW_INCLUDE_DIRS})
-link_directories(${GLFW_LIBRARY_DIRS})
-add_definitions(${GLFW_CFLAGS_OTHER})
-# Platform-specific settings
-if(APPLE)
-    message(STATUS "Detected platform: macOS")
-    set(PLATFORM_LIBS
-        ${GLFW_LIBRARIES}
-        "-framework OpenGL"
-        "-framework Cocoa"
-        "-framework IOKit"
-        "-framework CoreVideo"
-    )
-elseif(UNIX AND NOT APPLE)
-    message(STATUS "Detected platform: Linux")
-    set(PLATFORM_LIBS
-        ${GLFW_LIBRARIES}
-        GL
-    )
-elseif(WIN32)
-    message(STATUS "Detected platform: Windows")
-    set(PLATFORM_LIBS
-        glfw3
-        gdi32
-        opengl32
-        imm32
-    )
-endif()
+# --- ImPlot3D Library ---
+add_library(implot3d STATIC
+    implot3d/implot3d.cpp
+    implot3d/implot3d_items.cpp
+    implot3d/implot3d_demo.cpp
+)
+target_include_directories(implot3d PUBLIC
+    ${PROJECT_SOURCE_DIR}/implot3d
+    ${PROJECT_SOURCE_DIR}/implot
+    ${PROJECT_SOURCE_DIR}/imgui-master
+)
+target_link_libraries(implot3d PUBLIC implot)
 
-
+# -------------------------------------------------------------------------------------------------
+# Main Executable
+# -------------------------------------------------------------------------------------------------
 add_executable(DashboardExecutable
     main.cpp
-    DashboardController.hpp
     DashboardController.cpp
     DashboardGUI.cpp
-    components/StatusIndicators.hpp
     components/StatusIndicators.cpp
-    components/BatteryMonitor.hpp
     components/BatteryMonitor.cpp
-    components/MessageLogger.hpp
     components/MessageLogger.cpp
-    components/ConfigurationPanel.hpp
     components/ConfigurationPanel.cpp
-    components/RobotPlotting.hpp
     components/RobotPlotting.cpp
-    ${IMGUI_DIR}/imgui.cpp
-    ${IMGUI_DIR}/imgui_demo.cpp
-    ${IMGUI_DIR}/imgui_draw.cpp
-    ${IMGUI_DIR}/imgui_tables.cpp
-    ${IMGUI_DIR}/imgui_widgets.cpp
-    ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
-    ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
-    ${IMPLOT_DIR}/implot.cpp
-    ${IMPLOT_DIR}/implot_demo.cpp
-    ${IMPLOT_DIR}/implot_internal.h
-    ${IMPLOT_DIR}/implot_items.cpp
-    ${IMPLOT_DIR}/implot.h
-    ${IMPLOT3D_DIR}/implot3d.cpp
-    ${IMPLOT3D_DIR}/implot3d_demo.cpp
-    ${IMPLOT3D_DIR}/implot3d_internal.h
-    ${IMPLOT3D_DIR}/implot3d_items.cpp
-    ${IMPLOT3D_DIR}/implot3d.h
-
 )
 
+# Use ament_target_dependencies to handle ROS 2 dependencies correctly
 ament_target_dependencies(DashboardExecutable
-  rclcpp
-  std_msgs
-  sensor_msgs
-  geometry_msgs
-  nav_msgs
-  diagnostic_msgs
-  std_srvs
+    rclcpp
+    std_msgs
+    sensor_msgs
+    geometry_msgs
+    nav_msgs
+    diagnostic_msgs
+    std_srvs
 )
 
-# Correct target name here
-target_link_libraries(DashboardExecutable ${PLATFORM_LIBS} Threads::Threads)
+# Link all *other* dependencies to the executable
+target_link_libraries(DashboardExecutable
+    # Our custom libraries
+    implot3d
+    implot
+    imgui
 
+    # System libraries
+    ${GLFW_LIBRARIES}
+    OpenGL::GL
+    Threads::Threads
+)
+
+# -------------------------------------------------------------------------------------------------
+# Installation and Export
+# -------------------------------------------------------------------------------------------------
 install(TARGETS DashboardExecutable DESTINATION lib/${PROJECT_NAME})
-
 ament_package()
-
-
-
-
-
-
