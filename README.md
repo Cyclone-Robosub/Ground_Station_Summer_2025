@@ -1,4 +1,4 @@
-# CycloneDashboard
+# CycloneDashboard - Beta
 ## Running the Program
 Make sure that you have sourced ROS
 ```bash

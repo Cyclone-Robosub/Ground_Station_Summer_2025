@@ -15,13 +15,15 @@
 ///         
 class DashboardController : public rclcpp::Node {
 public:
-  DashboardController() : Node("DashboardNode") {
+  DashboardController(std::shared_ptr<StructofComponents> givenComponentStruct) : Node("DashboardNode"), ComponentStruct(givenComponentStruct) {
     SetupROS();
   }
   void Controller();
   void Shutdown();
 private:
   void SetupROS();
+  std::shared_ptr<StructofComponents> ComponentStruct;
+
   rclcpp::CallbackGroup::SharedPtr callbackBattery;
   rclcpp::CallbackGroup::SharedPtr callbackExecutive;
   rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr SOCsub;

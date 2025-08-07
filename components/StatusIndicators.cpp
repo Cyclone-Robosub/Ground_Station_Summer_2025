@@ -20,7 +20,7 @@ ImVec4 StatusToColor(const std::string& status) {
     else if (status == "error")   
         return ImVec4(1.0f, 0.0f, 0.0f, 1.0f); // Red
     else if (status == "standby")   
-        return ImVec4(0.0f, 0.0f, 1.0f, 1.0f); // Red
+        return ImVec4(0.0f, 0.0f, 1.0f, 1.0f); // Blue
     else if (status == "warning") 
         return ImVec4(1.0f, 1.0f, 0.0f, 1.0f); // Yellow
     return ImVec4(0.5f, 0.5f, 0.5f, 1.0f); // Gray for unknown

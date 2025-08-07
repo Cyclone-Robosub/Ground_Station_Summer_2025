@@ -9,7 +9,6 @@ int main(int argc, char *argv[]) {
   std::shared_ptr<StructofComponents> ComponentStruct = std::make_shared<StructofComponents>();
   std::shared_ptr<DashboardController> DashboardPtr = std::make_shared<DashboardController>(ComponentStruct);
   std::thread ROSThread([DashboardPtr]() { rclcpp::spin(DashboardPtr); });
-  ROSThread.detach();
   DashboardGUI DashboardGUIObject = DashboardGUI(DashboardPtr, ComponentStruct);
   DashboardGUIObject.Startup();
   rclcpp::shutdown();
