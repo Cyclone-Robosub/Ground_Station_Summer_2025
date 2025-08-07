@@ -1,6 +1,7 @@
 #include "imgui.h"
 #include "BatteryMonitor.hpp"
 #include <iostream>
+
 void RenderBatteryMonitor(float& battery_voltage, float& battery_threshold, float battery_current, bool isSOCINT) {
     ImGui::Begin("Battery Monitor");
 
@@ -22,13 +23,12 @@ void RenderBatteryMonitor(float& battery_voltage, float& battery_threshold, floa
     // Example of a slider to adjust the battery voltage (for demonstration purposes)
     // ImGui::SliderFloat("Adjust Voltage", &battery_voltage, 0.0f, 12.0f);
 
-
     //Battery Current
     static float current_history[history_size] = {0};
     static int current_history_index = 0;
     ImGui::Separator();
 
-    
+
     ImGui::Text("Battery Statue of Charge: %.2f %%", battery_current);
     ImGui::Text("Battery Status: %s", (isSOCINT) ? "LOW Battery SOC" : "Good");
     current_history[current_history_index] = battery_current;
