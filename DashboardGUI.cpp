@@ -81,6 +81,7 @@ int DashboardGUI::Startup()
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
+    ImPlot3D::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
@@ -120,6 +121,7 @@ int DashboardGUI::Startup()
 
     // Our state
     bool show_demo_window = false;
+    bool native_sample_data = true;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     // Main loop
@@ -277,6 +279,7 @@ int DashboardGUI::Startup()
     // Cleanup
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
+    ImPlot3D::DestroyContext();
     ImGui::DestroyContext();
 
     glfwDestroyWindow(window);
