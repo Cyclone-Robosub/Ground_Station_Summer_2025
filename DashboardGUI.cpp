@@ -206,7 +206,7 @@ int DashboardGUI::Startup()
 
         // Sample data for status indicators
         static std::vector<std::string> master_statuses = {
-            "success", "warning", "error"
+            "success", "warning", "error", "standby"
         };
         static std::vector<SystemStatus> system_statuses_set[] = {
             {
@@ -221,7 +221,12 @@ int DashboardGUI::Startup()
             },
             {
                 {"State Saver", "error", "System 1 failed"},
-                {"Robot Operations", "error", "System 2 failed"},
+                {"Robot Operations", "standby", "System 2 offline"},
+                {"Hardwar Status", "success", "System 3 is connected"}
+            },
+            {
+                {"State Saver", "error", "System 1 failed"},
+                {"Robot Operations", "standby", "System 2 offline"},
                 {"Hardwar Status", "success", "System 3 is connected"}
             }
         };
@@ -230,7 +235,7 @@ int DashboardGUI::Startup()
 
         auto now_status = std::chrono::steady_clock::now();
         if (std::chrono::duration_cast<std::chrono::seconds>(now_status - last_status_update).count() >= 2) {
-            status_idx = (status_idx + 1) % 3;
+            status_idx = (status_idx + 1) % 4;
             last_status_update = now_status;
         }
 

@@ -8,12 +8,31 @@
 // int horizonal_message_offsets[] = {80, 280};
 
 // Utility: Format timestamp as string
+// std::string FormatTimestamp(const std::chrono::system_clock::time_point& tp) {
+//     std::time_t t = std::chrono::system_clock::to_time_t(tp);
+//     std::tm* tm_ptr = std::localtime(&t);
+//     char buf[32];
+//     std::strftime(buf, sizeof(buf), "%H:%M:%S", tm_ptr);
+//     return std::string(buf);
+// }
+
 std::string FormatTimestamp(const std::chrono::system_clock::time_point& tp) {
+    // Get the duration since the epoch in milliseconds
+    auto since_epoch = tp.time_since_epoch();
+    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(since_epoch) % 1000;
+
+    // Convert to std::time_t for seconds
     std::time_t t = std::chrono::system_clock::to_time_t(tp);
+
+    // Convert to local time structure
     std::tm* tm_ptr = std::localtime(&t);
-    char buf[32];
-    std::strftime(buf, sizeof(buf), "%H:%M:%S", tm_ptr);
-    return std::string(buf);
+
+    // Use a stringstream to build the final string
+    std::stringstream ss;
+    ss << std::put_time(tm_ptr, "%H:%M:%S"); // Format hours, minutes, and seconds
+    ss << "." << std::setfill('0') << std::setw(3) << ms.count(); // Add milliseconds with zero-padding
+
+    return ss.str();
 }
 
 // Add a new message to a system log
