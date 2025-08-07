@@ -9,19 +9,23 @@
 #include <thread>
 #include <string>
 #include <atomic>
-
-class Dashboard : public rclcpp::Node {
+/// @todo : multithreadexecutor for multiple subscribers.
+///         Subscription Options
+///         
+class DashboardController : public rclcpp::Node {
 public:
-  Dashboard() : Node("DashboardNode") {
+  DashboardController() : Node("DashboardNode") {
     SetupROS();
-    // Controller();
   }
   std::atomic<float> SOC;
   std::atomic<bool> SOCint{false};
   std::atomic<std::shared_ptr<std::string>> CurrentTask;
   std::atomic<int> ManipulationCode;
+  void Controller();
+  void Shutdown();
 private:
   void SetupROS();
+  rclcpp::CallbackGroup::SharedPtr callbackBattery;
   rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr SOCsub;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr SOCINTsub;
   rclcpp::Subscription<std_msgs::msg::Float32MultiArray>::SharedPtr WaypointSub;
@@ -33,6 +37,6 @@ private:
   void getWaypoint(const std_msgs::msg::Float32MultiArray::SharedPtr msg);
   void getCurrentTask(const std_msgs::msg::String::SharedPtr msg);
   void getMainipulation(const std_msgs::msg::Int64::SharedPtr msg);
-  void Controller();
   bool isRobotRunning;
+  std::atomic<bool> isControllerShutdown{false};
 };

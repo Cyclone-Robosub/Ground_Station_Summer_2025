@@ -155,7 +155,7 @@ int DashboardGUI::Startup()
         static std::map<std::string, SystemLog> message_log;
         
         // Initialize logger with blank messages for each system (only once)
-        // This should be moved to Dashboard.cpp for initialization
+        // This should be moved to DashboardController.cpp for initialization
         static bool logger_initialized = false;
         if (!logger_initialized) {
             message_log["Manipulation"] = SystemLog{
@@ -243,6 +243,7 @@ int DashboardGUI::Startup()
         std::vector<SystemStatus> system_statuses = system_statuses_set[status_idx];
 
         // Render status indicators with sample data
+
         RenderStatusIndicators(master_status, system_statuses);
         
         // Battery voltage test data
@@ -260,7 +261,7 @@ int DashboardGUI::Startup()
         battery_voltage = battery_voltages[battery_idx];
 
         static float battery_threshold = 12.0f; // Example threshold value
-        RenderBatteryMonitor(battery_voltage, battery_threshold);
+        RenderBatteryMonitor(battery_voltage, battery_threshold, DashboardPointer->SOC.load(std::memory_order_acquire),DashboardPointer->SOCint.load(std::memory_order_acquire));
         
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
         if (show_demo_window)
@@ -321,6 +322,6 @@ int DashboardGUI::Startup()
 
     glfwDestroyWindow(window);
     glfwTerminate();
-
+    DashboardPointer->Shutdown();
     return 0;
 }
