@@ -10,14 +10,17 @@
 #include <GLES2/gl2.h>
 #endif
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
+
+
 class DashboardGUI{
     public:
-    DashboardGUI(std::shared_ptr<DashboardController> givenDashboardPointer) : DashboardPointer(givenDashboardPointer) {
+    DashboardGUI(std::shared_ptr<DashboardController> givenDashboardPointer, std::shared_ptr<StructofComponents> givenComponentStruct) : DashboardPointer(givenDashboardPointer), ComponentStructPointer(givenComponentStruct)  {
         DashboardControllerThread = std::jthread(&DashboardController::Controller, DashboardPointer.get());
         std::cout << "confirm got out of GUI constructor" << std::endl;
     };
     int Startup();
     private:
          std::shared_ptr<DashboardController> DashboardPointer;
+         std::shared_ptr<DashboardController> ComponentStructPointer;
          std::jthread DashboardControllerThread;
 };
