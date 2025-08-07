@@ -67,6 +67,8 @@ add_executable(DashboardExecutable
     components/BatteryMonitor.cpp
     components/MessageLogger.hpp
     components/MessageLogger.cpp
+    components/ConfigurationPanel.hpp
+    components/ConfigurationPanel.cpp
     ${IMGUI_DIR}/imgui.cpp
     ${IMGUI_DIR}/imgui_demo.cpp
     ${IMGUI_DIR}/imgui_draw.cpp

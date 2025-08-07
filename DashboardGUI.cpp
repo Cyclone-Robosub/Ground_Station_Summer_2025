@@ -10,6 +10,7 @@
 #include "components/StatusIndicators.hpp"
 #include "components/BatteryMonitor.hpp"
 #include "components/MessageLogger.hpp"
+#include "components/ConfigurationPanel.hpp"
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -118,8 +119,7 @@ int DashboardGUI::Startup()
     //IM_ASSERT(font != nullptr);
 
     // Our state
-    bool show_demo_window = true;
-    bool show_another_window = false;
+    bool show_demo_window = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     // Main loop
@@ -197,12 +197,7 @@ int DashboardGUI::Startup()
             last_update = now;
         }
 
-        // Render message logger
         RenderMessageLogger(message_log);
-        
-        // Render status indicators
-        
-        // RenderExampleIndicator(io);
 
         // Sample data for status indicators
         static std::vector<std::string> master_statuses = {
@@ -230,6 +225,7 @@ int DashboardGUI::Startup()
                 {"Hardwar Status", "success", "System 3 is connected"}
             }
         };
+
         static size_t status_idx = 0;
         static auto last_status_update = std::chrono::steady_clock::now();
 
@@ -242,8 +238,6 @@ int DashboardGUI::Startup()
         std::string master_status = master_statuses[status_idx];
         std::vector<SystemStatus> system_statuses = system_statuses_set[status_idx];
 
-        // Render status indicators with sample data
-
         RenderStatusIndicators(master_status, system_statuses);
         
         // Battery voltage test data
@@ -251,8 +245,8 @@ int DashboardGUI::Startup()
         static size_t battery_idx = 0;
         static auto last_battery_update = std::chrono::steady_clock::now();
 
-        auto now_battery = std::chrono::steady_clock::now();
         // For battery voltage
+        auto now_battery = std::chrono::steady_clock::now();
         if (std::chrono::duration_cast<std::chrono::milliseconds>(now_battery - last_battery_update).count() >= 50) {
             battery_idx = (battery_idx + 1) % battery_voltages.size();
             last_battery_update = now_battery;
@@ -263,42 +257,7 @@ int DashboardGUI::Startup()
         static float battery_threshold = 12.0f; // Example threshold value
         RenderBatteryMonitor(battery_voltage, battery_threshold, DashboardPointer->SOC.load(std::memory_order_acquire),DashboardPointer->SOCint.load(std::memory_order_acquire));
         
-        // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-        if (show_demo_window)
-            ImGui::ShowDemoWindow(&show_demo_window);
-
-        // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
-        {
-            static float f = 0.0f;
-            static int counter = 0;
-
-            ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-            ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-            ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-            ImGui::Checkbox("Another Window", &show_another_window);
-
-            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-            ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-            if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-                counter++;
-            ImGui::SameLine();
-            ImGui::Text("counter = %d", counter);
-
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-            ImGui::End();
-        }
-
-        // 3. Show another simple window.
-        if (show_another_window)
-        {
-            ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-            ImGui::Text("Hello from another window!");
-            if (ImGui::Button("Close Me"))
-                show_another_window = false;
-            ImGui::End();
-        }
+        RenderConfigurationPanel(io, show_demo_window);
 
         // Rendering
         ImGui::Render();
