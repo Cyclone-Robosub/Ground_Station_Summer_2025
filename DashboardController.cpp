@@ -29,22 +29,18 @@ void DashboardController::Controller()
     while (!isControllerShutdown.load())
     {
         // Robot not Running
-        if (CurrentTask.load(std::memory_order_acquire) != nullptr)
+        if (ComponentStruct->LocationData.CurrentTask.load(std::memory_order_acquire) != nullptr)
         {
             isRobotRunning = true;
-            std::fill(ComponentStruct->SystemStatusData.statuses.begin(), ComponentStruct->SystemStatusData.statuses.end(), "success");
+            std::lock_guard<std::mutex>(ComponentStruct->SystemStatusData.SystemStatusmutex);
+            std::fill(ComponentStruct->SystemStatusData.StatusVector.begin(), ComponentStruct->SystemStatusData.StatusVector.end(), StatusCondition::SUCCESS);
         }
         while (isRobotRunning)
-        {
-            //Check all errors.
-            //Check all warnings.
-            //send green signal.
-            // If SOC INT is true -> push it out Red on main light.
-            if (ComponentStruct->BatteryData.SOCint.load(std::memory_order_acquire))
-                ComponentStruct->SystemStatusData.MainStatus = "error";
-            // if Everything is good push it out all green.
+        {   
+            //Generate StatusVector
         }
-        std::fill(ComponentStruct->SystemStatusData.statuses.begin(), ComponentStruct->SystemStatusData.statuses.end(), "standby");
+        std::lock_guard<std::mutex>(ComponentStruct->SystemStatusData.SystemStatusmutex);
+        std::fill(ComponentStruct->SystemStatusData.StatusVector.begin(), ComponentStruct->SystemStatusData.StatusVector.end(), StatusCondition::STANDBY);
     }
 
     //
@@ -58,7 +54,6 @@ void DashboardController::getSOC(const std_msgs::msg::Float64::SharedPtr msg)
 void DashboardController::getSOCINT(const std_msgs::msg::Bool::SharedPtr msg)
 {
     ComponentStruct->BatteryData.SOCint.store(msg->data, std::memory_order_release);
-    ComponentStruct->SystemStatusData.statuses[0] = "error";
 }
 
 void DashboardController::getWaypoint(const std_msgs::msg::Float32MultiArray::SharedPtr msg)

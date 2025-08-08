@@ -5,6 +5,7 @@
 #include "imgui_impl_opengl3.h"
 #include <stdio.h>
 #include "DashboardController.hpp"
+#include "StructComponents.hpp"
 #define GL_SILENCE_DEPRECATION
 #if defined(IMGUI_IMPL_OPENGL_ES2)
 #include <GLES2/gl2.h>
@@ -21,6 +22,6 @@ class DashboardGUI{
     int Startup();
     private:
          std::shared_ptr<DashboardController> DashboardPointer;
-         std::shared_ptr<DashboardController> ComponentStructPointer;
+         std::shared_ptr<StructofComponents> ComponentStructPointer;
          std::jthread DashboardControllerThread;
 };

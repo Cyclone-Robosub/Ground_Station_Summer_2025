@@ -260,7 +260,7 @@ int DashboardGUI::Startup()
         battery_voltage = battery_voltages[battery_idx];
 
         static float battery_threshold = 12.0f; // Example threshold value
-        RenderBatteryMonitor(CompoonentStructPointer->BatteryStructPtr.get());
+        RenderBatteryMonitor(ComponentStructPointer->BatteryData);
         
         RenderConfigurationPanel(io, show_demo_window);
 
