@@ -206,7 +206,7 @@ int DashboardGUI::Startup()
 
         // Sample data for status indicators
         static std::vector<std::string> master_statuses = {
-            "success", "warning", "error", "standby"
+            "DANGER", "warning", "success", "standby"
         };
         static std::vector<SystemStatus> system_statuses_set[] = {
             {
@@ -239,12 +239,12 @@ int DashboardGUI::Startup()
             status_idx = (status_idx + 1) % 4;
             last_status_update = now_status;
         }
-
-        std::string master_status = master_statuses[status_idx];
-        std::vector<SystemStatus> system_statuses = system_statuses_set[status_idx];
-
-        RenderStatusIndicators(master_status, system_statuses);
+        std::unique_lock<std::mutex> lk(ComponentStructPointer->SystemStatusmutex);
+        std::string master_status = ComponentStructPointer->SystemStatusData[0].status;
+       // std::vector<SystemStatus> system_statuses = system_statuses_set[status_idx];
         
+        RenderStatusIndicators(master_status, ComponentStructPointer->SystemStatusData);
+        lk.unlock();
         // Battery voltage test data
         static std::vector<float> battery_voltages = {12.0f, 14.5f, 10.8f, 16.0f, 11.2f, 13.3f};
         static size_t battery_idx = 0;
