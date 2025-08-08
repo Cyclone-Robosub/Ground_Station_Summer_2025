@@ -9,23 +9,23 @@
 #include <thread>
 #include <string>
 #include <atomic>
+#include "StructComponents.hpp"
 /// @todo : multithreadexecutor for multiple subscribers.
 ///         Subscription Options
 ///         
 class DashboardController : public rclcpp::Node {
 public:
-  DashboardController() : Node("DashboardNode") {
+  DashboardController(std::shared_ptr<StructofComponents> givenComponentStruct) : Node("DashboardNode"), ComponentStruct(givenComponentStruct) {
     SetupROS();
   }
-  std::atomic<float> SOC;
-  std::atomic<bool> SOCint{false};
-  std::atomic<std::shared_ptr<std::string>> CurrentTask;
-  std::atomic<int> ManipulationCode;
   void Controller();
   void Shutdown();
 private:
   void SetupROS();
+  std::shared_ptr<StructofComponents> ComponentStruct;
+
   rclcpp::CallbackGroup::SharedPtr callbackBattery;
+  rclcpp::CallbackGroup::SharedPtr callbackExecutive;
   rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr SOCsub;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr SOCINTsub;
   rclcpp::Subscription<std_msgs::msg::Float32MultiArray>::SharedPtr WaypointSub;

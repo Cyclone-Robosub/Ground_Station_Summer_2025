@@ -79,6 +79,7 @@ add_executable(DashboardExecutable
     components/MessageLogger.cpp
     components/ConfigurationPanel.cpp
     components/RobotPlotting.cpp
+    StructComponents.hpp
 )
 
 # Use ament_target_dependencies to handle ROS 2 dependencies correctly

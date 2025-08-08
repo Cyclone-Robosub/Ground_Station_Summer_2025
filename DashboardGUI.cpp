@@ -206,7 +206,7 @@ int DashboardGUI::Startup()
 
         // Sample data for status indicators
         static std::vector<std::string> master_statuses = {
-            "success", "warning", "error", "standby"
+            "DANGER", "warning", "success", "standby"
         };
         static std::vector<SystemStatus> system_statuses_set[] = {
             {
@@ -239,12 +239,12 @@ int DashboardGUI::Startup()
             status_idx = (status_idx + 1) % 4;
             last_status_update = now_status;
         }
-
-        std::string master_status = master_statuses[status_idx];
-        std::vector<SystemStatus> system_statuses = system_statuses_set[status_idx];
-
-        RenderStatusIndicators(master_status, system_statuses);
+        std::unique_lock<std::mutex> lk(ComponentStructPointer->SystemStatusmutex);
+        std::string master_status = ComponentStructPointer->SystemStatusData[0].status;
+       // std::vector<SystemStatus> system_statuses = system_statuses_set[status_idx];
         
+        RenderStatusIndicators(master_status, ComponentStructPointer->SystemStatusData);
+        lk.unlock();
         // Battery voltage test data
         static std::vector<float> battery_voltages = {12.0f, 14.5f, 10.8f, 16.0f, 11.2f, 13.3f};
         static size_t battery_idx = 0;
@@ -260,7 +260,7 @@ int DashboardGUI::Startup()
         battery_voltage = battery_voltages[battery_idx];
 
         static float battery_threshold = 12.0f; // Example threshold value
-        RenderBatteryMonitor(battery_voltage, battery_threshold, DashboardPointer->SOC.load(std::memory_order_acquire),DashboardPointer->SOCint.load(std::memory_order_acquire));
+        RenderBatteryMonitor(ComponentStructPointer->BatteryData);
         
         RenderConfigurationPanel(io, show_demo_window);
 

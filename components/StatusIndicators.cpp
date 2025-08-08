@@ -2,7 +2,7 @@
 #include "StatusIndicators.hpp"
 #include <string>
 #include <vector>
-
+#include <mutex>
 
 void RenderExampleIndicator(ImGuiIO& io) {
     ImGui::Begin("Example Indicators");
@@ -17,10 +17,10 @@ void RenderExampleIndicator(ImGuiIO& io) {
 ImVec4 StatusToColor(const std::string& status) {
     if (status == "success")      
         return ImVec4(0.0f, 1.0f, 0.0f, 1.0f); // Green
-    else if (status == "error")   
+    else if (status == "danger")   
         return ImVec4(1.0f, 0.0f, 0.0f, 1.0f); // Red
     else if (status == "standby")   
-        return ImVec4(0.0f, 0.0f, 1.0f, 1.0f); // Red
+        return ImVec4(0.0f, 0.0f, 1.0f, 1.0f); // Blue
     else if (status == "warning") 
         return ImVec4(1.0f, 1.0f, 0.0f, 1.0f); // Yellow
     return ImVec4(0.5f, 0.5f, 0.5f, 1.0f); // Gray for unknown
@@ -48,14 +48,13 @@ void SystemStatusLight(const SystemStatus& system_status) {
     ImGui::Text("Message: %s", system_status.message.c_str());
 }
 
-void RenderStatusIndicators(const std::string& master_status, const std::vector<SystemStatus>& system_statuses) {
+void RenderStatusIndicators(const std::string& master_status, std::vector<SystemStatus> SystemStatusData) {
     ImGui::Begin("System Status Indicators");
 
     MasterStatusLight(master_status);
-
-    for (size_t i = 0; i < system_statuses.size(); ++i) {
-        if (ImGui::CollapsingHeader(system_statuses[i].name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
-            SystemStatusLight(system_statuses[i]);
+    for (size_t i = 1; i < SystemStatusData.size(); ++i) {
+        if (ImGui::CollapsingHeader(SystemStatusData[i].name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+            SystemStatusLight(SystemStatusData[i]);
         }
     }
 
