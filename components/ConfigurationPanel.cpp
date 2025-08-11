@@ -1,8 +1,18 @@
 #include "ConfigurationPanel.hpp"
 #include "imgui.h"
+#include "implot3d.h"
 
 // The implementation of the GUI function
-void RenderConfigurationPanel(ImGuiIO& io, bool& show_demo_window) {
+void RenderConfigurationPanel(ImGuiIO& io, bool& show_demo_window, bool& show_3ddemo_window) {
+    // Start the Dear ImGui frame
+
+    // Show the demo window if requested
+    if (show_3ddemo_window) {
+        ImPlot3D::ShowDemoWindow(&show_3ddemo_window);
+    }
+
+
+    // Show the demo window if requested
   
   if (show_demo_window)
     ImGui::ShowDemoWindow(&show_demo_window);
@@ -14,6 +24,7 @@ void RenderConfigurationPanel(ImGuiIO& io, bool& show_demo_window) {
 
     // ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
     ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+    ImGui::Checkbox("3D PLotting Demo Window", &show_3ddemo_window);      // Edit bools storing our window open/close state
     // ImGui::Checkbox("Another Window", &show_another_window);
 
     // ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
