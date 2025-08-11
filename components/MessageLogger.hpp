@@ -23,12 +23,15 @@ struct SystemLog {
 // Manages all system logs and their rendering
 class MessageLogger {
 public:
+    MessageLogger(const std::string& system_name = "General Logger");
+    
     void AddSystemMessage(const std::string& system_name, const std::string& message_text);
     void Initialize(const std::string& system_name);
     void Render();
 
 private:
     std::map<std::string, SystemLog> system_logs_;
+    std::string system_name_;
 
     // Private helper methods for rendering
     void DisplayCurrentMessage(const SystemLog& log);

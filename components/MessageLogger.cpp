@@ -20,6 +20,12 @@ std::string FormatTimestamp(const std::chrono::system_clock::time_point& tp) {
     return ss.str();
 }
 
+MessageLogger::MessageLogger(const std::string& system_name)
+    : system_name_(system_name) {
+    // Initialize the logger with the given system name
+    // Initialize(system_name);
+}
+
 // Private helper to display the current message
 void MessageLogger::DisplayCurrentMessage(const SystemLog& log) {
     auto text_color = ImVec4(0.8f, 1.0f, 0.8f, 1.0f);
@@ -56,7 +62,7 @@ void MessageLogger::AddSystemMessage(const std::string& system_name, const std::
 
 // Render all system logs in a single ImGui window
 void MessageLogger::Render() {
-    ImGui::Begin("System Message Logger");
+    ImGui::Begin(system_name_.c_str());
 
     for (const auto& [system_name, log] : system_logs_) {
         if (ImGui::CollapsingHeader(system_name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {

@@ -183,7 +183,7 @@ int DashboardGUI::Startup()
 
         generalLogger.Render();
 
-        MessageLogger robotController; 
+        MessageLogger robotController("Robot Controller"); 
         robotController.AddSystemMessage("PWM", "PWM controller initialized");
         robotController.AddSystemMessage("Waypoint", "Waypoint received: [1.0, 2.0, 3.0]");
         robotController.Render();
