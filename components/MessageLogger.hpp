@@ -15,13 +15,16 @@ struct LoggedMessage {
 struct SystemLog {
     std::string system_name;
     LoggedMessage current_message;
-    std::vector<LoggedMessage> prior_messages;
+    std::vector<LoggedMessage> prior_messages = {{"", std::chrono::system_clock::time_point{}},
+                                                  {"", std::chrono::system_clock::time_point{}},
+                                                  {"", std::chrono::system_clock::time_point{}}};
 };
 
 // Manages all system logs and their rendering
 class MessageLogger {
 public:
     void AddSystemMessage(const std::string& system_name, const std::string& message_text);
+    void Initialize(const std::string& system_name);
     void Render();
 
 private:

@@ -154,23 +154,6 @@ int DashboardGUI::Startup()
         ImGui::NewFrame();
 
         static MessageLogger generalLogger;
-        // Sample data for message logger        
-        // Initialize logger with blank messages for each system (only once)
-        // This should be moved to DashboardController.cpp for initialization
-        // static bool logger_initialized = false;
-        // if (!logger_initialized) {
-        //     message_log["Manipulation"] = SystemLog{
-        //         "Manipulation",
-        //         LoggedMessage{"", std::chrono::system_clock::now()},
-        //         std::vector<LoggedMessage>(3, LoggedMessage{"", std::chrono::system_clock::now()})
-        //     };
-        //     message_log["Vision"] = SystemLog{
-        //         "Vision",
-        //         LoggedMessage{"", std::chrono::system_clock::now()},
-        //         std::vector<LoggedMessage>(3, LoggedMessage{"", std::chrono::system_clock::now()})
-        //     };
-        //     logger_initialized = true;
-        // }
         
         // Dynamic test messages
         static std::vector<std::string> manipulation_messages = {
