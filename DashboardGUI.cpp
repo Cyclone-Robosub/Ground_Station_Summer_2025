@@ -202,6 +202,16 @@ int DashboardGUI::Startup()
 
         RenderMessageLogger(message_log);
 
+        static LimitedTrajectory robot_trajectory(5000);
+        float coordinates[3];
+        for (int i = 0; i < 13; i++) {
+            coordinates[0] = (float)ImGui::GetTime() / 10;
+            coordinates[1] = (float)ImGui::GetTime() / 10;
+            coordinates[2] = (float)ImGui::GetTime() / 10;
+            robot_trajectory.addPoint(coordinates); // Example point
+        }
+        robot_trajectory.plot();
+
         DemoLinePlots();
 
         // Sample data for status indicators
