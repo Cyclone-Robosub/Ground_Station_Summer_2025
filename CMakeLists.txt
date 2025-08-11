@@ -59,6 +59,7 @@ add_library(implot3d STATIC
     implot3d/implot3d.cpp
     implot3d/implot3d_items.cpp
     implot3d/implot3d_demo.cpp
+    implot3d/implot3d_meshes.cpp
 )
 target_include_directories(implot3d PUBLIC
     ${PROJECT_SOURCE_DIR}/implot3d

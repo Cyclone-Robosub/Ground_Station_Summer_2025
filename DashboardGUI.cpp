@@ -122,6 +122,7 @@ int DashboardGUI::Startup()
 
     // Our state
     bool show_demo_window = false;
+    bool show_3ddemo_window = false;
     bool native_sample_data = true;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -258,7 +259,7 @@ int DashboardGUI::Startup()
         static float battery_threshold = 12.0f; // Example threshold value
         RenderBatteryMonitor(ComponentStructPointer->BatteryData);
         
-        RenderConfigurationPanel(io, show_demo_window);
+        RenderConfigurationPanel(io, show_demo_window, show_3ddemo_window);
 
         // Rendering
         ImGui::Render();
