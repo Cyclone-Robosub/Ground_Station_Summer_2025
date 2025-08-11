@@ -199,7 +199,7 @@ int DashboardGUI::Startup()
         }
         robot_trajectory.plot();
 
-        DemoLinePlots();
+        // DemoLinePlots();
 
         // Sample data for status indicators
         static std::vector<std::string> master_statuses = {
