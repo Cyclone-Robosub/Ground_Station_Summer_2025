@@ -5,84 +5,65 @@
 #include <sstream>
 #include <ctime>
 
-// int horizonal_message_offsets[] = {80, 280};
-
-// Utility: Format timestamp as string
-// std::string FormatTimestamp(const std::chrono::system_clock::time_point& tp) {
-//     std::time_t t = std::chrono::system_clock::to_time_t(tp);
-//     std::tm* tm_ptr = std::localtime(&t);
-//     char buf[32];
-//     std::strftime(buf, sizeof(buf), "%H:%M:%S", tm_ptr);
-//     return std::string(buf);
-// }
-
+// A helper function that formats a timestamp.
+// This could be a private method or a free function.
 std::string FormatTimestamp(const std::chrono::system_clock::time_point& tp) {
-    // Get the duration since the epoch in milliseconds
     auto since_epoch = tp.time_since_epoch();
     auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(since_epoch) % 1000;
-
-    // Convert to std::time_t for seconds
     std::time_t t = std::chrono::system_clock::to_time_t(tp);
-
-    // Convert to local time structure
     std::tm* tm_ptr = std::localtime(&t);
 
-    // Use a stringstream to build the final string
     std::stringstream ss;
-    ss << std::put_time(tm_ptr, "%H:%M:%S"); // Format hours, minutes, and seconds
-    ss << "." << std::setfill('0') << std::setw(3) << ms.count(); // Add milliseconds with zero-padding
+    ss << std::put_time(tm_ptr, "%H:%M:%S");
+    ss << "." << std::setfill('0') << std::setw(3) << ms.count();
 
     return ss.str();
 }
 
+// Private helper to display the current message
+void MessageLogger::DisplayCurrentMessage(const SystemLog& log) {
+    auto text_color = ImVec4(0.8f, 1.0f, 0.8f, 1.0f);
+    ImGui::TextDisabled("[%s]", FormatTimestamp(log.current_message.timestamp).c_str());
+    ImGui::SameLine();
+    ImGui::TextColored(text_color, "%s", log.current_message.text.c_str());
+}
+
+// Private helper to display prior messages
+void MessageLogger::DisplayPriorMessages(const SystemLog& log) {
+    for (size_t i = 0; i < log.prior_messages.size(); ++i) {
+        ImGui::TextDisabled("[%s]", FormatTimestamp(log.prior_messages[i].timestamp).c_str());
+        ImGui::SameLine();
+        ImGui::Text("%s", log.prior_messages[i].text.c_str());
+    }
+}
+
 // Add a new message to a system log
-void AddSystemMessage(std::map<std::string, SystemLog>& system_logs, const std::string& system_name, const std::string& message_text) {
+void MessageLogger::AddSystemMessage(const std::string& system_name, const std::string& message_text) {
     auto now = std::chrono::system_clock::now();
     LoggedMessage new_msg{message_text, now};
 
-    auto& log = system_logs[system_name];
+    auto& log = system_logs_[system_name];
     log.system_name = system_name;
 
-    // Move current to prior, push new as current
     if (!log.current_message.text.empty()) {
         log.prior_messages.insert(log.prior_messages.begin(), log.current_message);
-        if (log.prior_messages.size() > 3) // Change this to change number of entries
+        if (log.prior_messages.size() > 3) {
             log.prior_messages.pop_back();
+        }
     }
     log.current_message = new_msg;
 }
 
-// Display the most recent message for a system
-void DisplayCurrentMessage(const SystemLog& log) {
-    auto text_color = ImVec4(0.8f, 1.0f, 0.8f, 1.0f); // Light green for current message
-    ImGui::TextDisabled("[%s]", FormatTimestamp(log.current_message.timestamp).c_str());
-    ImGui::SameLine();
-    ImGui::TextColored(text_color, "%s", log.current_message.text.c_str());
-    // ImGui::PushFont(NULL, 200.0f); // Use default font for current message
-}
-
-// Display up to three prior messages for a system
-void DisplayPriorMessages(const SystemLog& log) {
-    for (size_t i = 0; i < log.prior_messages.size(); ++i) {
-        ImGui::TextDisabled("[%s]", FormatTimestamp(log.prior_messages[i].timestamp).c_str());
-        ImGui::SameLine();
-        ImGui::Text("%s",log.prior_messages[i].text.c_str());
-    }
-}
-
 // Render all system logs in a single ImGui window
-void RenderMessageLogger(const std::map<std::string, SystemLog>& system_logs) {
+void MessageLogger::Render() {
     ImGui::Begin("System Message Logger");
 
-    for (const auto& [system_name, log] : system_logs) {
-      // ImGui::TextColored(ImVec4(0.7f, 0.9f, 1.0f, 1.0f), "%s", system_name.c_str());
-      if (ImGui::CollapsingHeader(system_name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
-          DisplayCurrentMessage(log);
-          ImGui::Separator();
-          DisplayPriorMessages(log);
-
+    for (const auto& [system_name, log] : system_logs_) {
+        if (ImGui::CollapsingHeader(system_name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+            DisplayCurrentMessage(log);
+            ImGui::Separator();
+            DisplayPriorMessages(log);
         }
-            // return;
     }
 
     ImGui::End();

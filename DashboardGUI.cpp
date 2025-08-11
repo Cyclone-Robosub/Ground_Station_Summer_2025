@@ -153,26 +153,24 @@ int DashboardGUI::Startup()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        
-        // Sample data for message logger
-        static std::map<std::string, SystemLog> message_log;
-        
+        static MessageLogger generalLogger;
+        // Sample data for message logger        
         // Initialize logger with blank messages for each system (only once)
         // This should be moved to DashboardController.cpp for initialization
-        static bool logger_initialized = false;
-        if (!logger_initialized) {
-            message_log["Manipulation"] = SystemLog{
-                "Manipulation",
-                LoggedMessage{"", std::chrono::system_clock::now()},
-                std::vector<LoggedMessage>(3, LoggedMessage{"", std::chrono::system_clock::now()})
-            };
-            message_log["Vision"] = SystemLog{
-                "Vision",
-                LoggedMessage{"", std::chrono::system_clock::now()},
-                std::vector<LoggedMessage>(3, LoggedMessage{"", std::chrono::system_clock::now()})
-            };
-            logger_initialized = true;
-        }
+        // static bool logger_initialized = false;
+        // if (!logger_initialized) {
+        //     message_log["Manipulation"] = SystemLog{
+        //         "Manipulation",
+        //         LoggedMessage{"", std::chrono::system_clock::now()},
+        //         std::vector<LoggedMessage>(3, LoggedMessage{"", std::chrono::system_clock::now()})
+        //     };
+        //     message_log["Vision"] = SystemLog{
+        //         "Vision",
+        //         LoggedMessage{"", std::chrono::system_clock::now()},
+        //         std::vector<LoggedMessage>(3, LoggedMessage{"", std::chrono::system_clock::now()})
+        //     };
+        //     logger_initialized = true;
+        // }
         
         // Dynamic test messages
         static std::vector<std::string> manipulation_messages = {
@@ -193,14 +191,19 @@ int DashboardGUI::Startup()
         
         auto now = std::chrono::steady_clock::now();
         if (std::chrono::duration_cast<std::chrono::seconds>(now - last_update).count() >= 2) {
-            AddSystemMessage(message_log, "Manipulation", manipulation_messages[manip_idx]);
-            AddSystemMessage(message_log, "Vision", vision_messages[vision_idx]);
+            generalLogger.AddSystemMessage("Manipulation", manipulation_messages[manip_idx]);
+            generalLogger.AddSystemMessage("Vision", vision_messages[vision_idx]);
             manip_idx = (manip_idx + 1) % manipulation_messages.size();
             vision_idx = (vision_idx + 1) % vision_messages.size();
             last_update = now;
         }
 
-        RenderMessageLogger(message_log);
+        generalLogger.Render();
+
+        MessageLogger robotController; 
+        robotController.AddSystemMessage("PWM", "PWM controller initialized");
+        robotController.AddSystemMessage("Waypoint", "Waypoint received: [1.0, 2.0, 3.0]");
+        robotController.Render();
 
         static LimitedTrajectory robot_trajectory(5000);
         float coordinates[3];
