@@ -7,17 +7,19 @@ void DemoLinePlots();
 
 class LimitedTrajectory {
 public:
-    // --- Declaration of the constructor ---
     LimitedTrajectory(std::string name, size_t max_points = 2000);
 
-    // --- Declaration of the methods ---
     void addPoint(const float* coordinates);
-    void plot();
+    std::vector <float> getXs() const { return xs_; }
+    std::vector <float> getYs() const { return ys_; }
+    std::vector <float> getZs() const { return zs_; }
 
 private:
     size_t max_points_;
     std::string name_;
-    std::vector<float> xs_; // Using a trailing underscore is a common style for private members
+    std::vector<float> xs_;
     std::vector<float> ys_;
     std::vector<float> zs_;
 };
+
+void plotLines(const LimitedTrajectory& robot_postition, const LimitedTrajectory& waypoints);

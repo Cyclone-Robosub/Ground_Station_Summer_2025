@@ -50,16 +50,18 @@ void LimitedTrajectory::addPoint(const float* coordinates) {
     zs_.push_back(coordinates[2]);
 }
 
-// --- Definition of the plot method ---
-void LimitedTrajectory::plot() {
-    if (xs_.size() < 2) {
-        return; // Nothing to plot
-    }
+void plotLines(const LimitedTrajectory& robot_position, const LimitedTrajectory& waypoints) {
+
     ImGui::Begin("Robot Trajectory Plots");
     if (ImPlot3D::BeginPlot("Robot Position Trajectory")) {
         ImPlot3D::SetupAxes("x", "y", "z");
-        ImPlot3D::PlotLine(name_.c_str(), xs_.data(), ys_.data(), zs_.data(), xs_.size(), ImPlot3DLineFlags_None);
+        ImPlot3D::PlotLine("Robot Position", robot_position.getXs().data(), robot_position.getYs().data(), robot_position.getZs().data(),
+                           (int)robot_position.getXs().size(), ImPlot3DLineFlags_None);
+        ImPlot3D::PlotLine("Waypoints", waypoints.getXs().data(), waypoints.getYs().data(), waypoints.getZs().data(),
+                           (int)waypoints.getXs().size(), ImPlot3DLineFlags_None);
         ImPlot3D::EndPlot();
+
     }
+
     ImGui::End();
 }

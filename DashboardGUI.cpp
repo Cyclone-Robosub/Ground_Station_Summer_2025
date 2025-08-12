@@ -187,23 +187,24 @@ int DashboardGUI::Startup()
         
         generalLogger.Render();
         
+        // Example date for plotting
         static LimitedTrajectory robot_trajectory("Robot Position", 1000);
         float coordinates[3];
         coordinates[0] = (float)ImGui::GetTime() / 10;
         coordinates[1] = (float)ImGui::GetTime() / 10;
         coordinates[2] = (float)ImGui::GetTime() / 10;
-        robot_trajectory.addPoint(coordinates); // Example point
-        robot_trajectory.plot();
+        robot_trajectory.addPoint(coordinates); 
 
         static LimitedTrajectory waypoints("Waypoints", 1000);
         float waypoint_coordinates[3];
         waypoint_coordinates[0] = (float)ImGui::GetTime() / 10 + 1;
         waypoint_coordinates[1] = (float)ImGui::GetTime() / 10;
         waypoint_coordinates[2] = (float)ImGui::GetTime() / 10;
-        waypoints.addPoint(waypoint_coordinates); // Example point
-        
-        waypoints.plot();
+        waypoints.addPoint(waypoint_coordinates); 
 
+        plotLines(robot_trajectory, waypoints);
+
+        
         static MessageLogger robotController("Robot Controller"); 
         
         static bool is_initialized = false;
