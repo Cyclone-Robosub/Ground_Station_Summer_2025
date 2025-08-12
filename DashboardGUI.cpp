@@ -158,7 +158,7 @@ int DashboardGUI::Startup()
         
         // Dynamic test messages
         static std::vector<std::string> manipulation_messages = {
-            "Manipulator initialized",
+            "Manipulator initialized" ,
             "Manipulator ready",
             "Manipulator error: joint overload",
             "Manipulator recovered"
@@ -174,30 +174,56 @@ int DashboardGUI::Startup()
         static auto last_update = std::chrono::steady_clock::now();
         
         auto now = std::chrono::steady_clock::now();
+       // static int mainindex = 0;
         if (std::chrono::duration_cast<std::chrono::seconds>(now - last_update).count() >= 2) {
             generalLogger.AddSystemMessage("Manipulation", manipulation_messages[manip_idx]);
+          //  mainindex++;
             generalLogger.AddSystemMessage("Vision", vision_messages[vision_idx]);
             manip_idx = (manip_idx + 1) % manipulation_messages.size();
             vision_idx = (vision_idx + 1) % vision_messages.size();
             last_update = now;
         }
 
+        
         generalLogger.Render();
-
-        MessageLogger robotController("Robot Controller"); 
-        robotController.AddSystemMessage("PWM", "PWM controller initialized");
-        robotController.AddSystemMessage("Waypoint", "Waypoint received: [1.0, 2.0, 3.0]");
-        robotController.Render();
-
-        static LimitedTrajectory robot_trajectory(5000);
+        
+        static LimitedTrajectory robot_trajectory(1000);
         float coordinates[3];
-        for (int i = 0; i < 13; i++) {
+        // for (int i = 0; i < 13; i++) {
             coordinates[0] = (float)ImGui::GetTime() / 10;
             coordinates[1] = (float)ImGui::GetTime() / 10;
             coordinates[2] = (float)ImGui::GetTime() / 10;
             robot_trajectory.addPoint(coordinates); // Example point
-        }
+        // }
         robot_trajectory.plot();
+        
+        static MessageLogger robotController("Robot Controller"); 
+        
+        static bool is_initialized = false;
+        if (!is_initialized) {
+            robotController.AddSystemMessage("PWM", "PWM controller initialized");
+            is_initialized = true;
+        }
+
+        // robotController.AddSystemMessage("Waypoint", "Waypoint received: [1.0, 2.0, 3.0]");
+        
+        #include <sstream>
+        #include <iomanip>
+        std::stringstream ss;
+
+        // 2. Build the string with the desired formatting
+        ss << "Waypoint received: ["
+        << std::fixed << std::setprecision(5) << coordinates[0] << ", "
+        << std::fixed << std::setprecision(5) << coordinates[1] << ", "
+        << std::fixed << std::setprecision(5) << coordinates[2] << "]";
+
+        // 3. Get the final string from the stringstream
+        std::string formatted_message = ss.str();
+       
+
+        // 4. Pass the formatted string to the AddSystemMessage function
+        robotController.AddSystemMessage("Waypoint", formatted_message);
+        robotController.Render();
 
         // DemoLinePlots();
 
