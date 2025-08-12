@@ -30,7 +30,7 @@ void DemoLinePlots() {
 
 // --- Definition of the constructor ---
 // Use the scope resolution operator "::" to specify we're defining a method of LimitedTrajectory
-LimitedTrajectory::LimitedTrajectory(size_t max_points) : max_points_(max_points) {
+LimitedTrajectory::LimitedTrajectory(std::string name, size_t max_points) : name_(name),  max_points_(max_points) {
     // Pre-allocate memory to improve performance by avoiding frequent reallocations
     xs_.reserve(max_points_);
     ys_.reserve(max_points_);
@@ -58,7 +58,7 @@ void LimitedTrajectory::plot() {
     ImGui::Begin("Robot Trajectory Plots");
     if (ImPlot3D::BeginPlot("Robot Position Trajectory")) {
         ImPlot3D::SetupAxes("x", "y", "z");
-        ImPlot3D::PlotLine("Robot Trajectory", xs_.data(), ys_.data(), zs_.data(), xs_.size(), ImPlot3DLineFlags_None);
+        ImPlot3D::PlotLine(name_.c_str(), xs_.data(), ys_.data(), zs_.data(), xs_.size(), ImPlot3DLineFlags_None);
         ImPlot3D::EndPlot();
     }
     ImGui::End();
