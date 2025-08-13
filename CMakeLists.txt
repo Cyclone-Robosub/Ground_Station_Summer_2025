@@ -20,51 +20,57 @@ find_package(rosidl_default_generators REQUIRED)
 find_package(Threads REQUIRED)
 
 # -------------------------------------------------------------------------------------------------
-# Third-Party Dependencies (not in separate CMake projects)
+# Third-Party Dependencies (now in the 'include' subdirectory)
 # -------------------------------------------------------------------------------------------------
 find_package(glfw3 3.3 REQUIRED)
 find_package(OpenGL REQUIRED)
 
 # --- ImGui Library ---
+# The source files are now located under the `include/imgui` directory.
 add_library(imgui STATIC
-    imgui/imgui.cpp
-    imgui/imgui_demo.cpp
-    imgui/imgui_draw.cpp
-    imgui/imgui_tables.cpp
-    imgui/imgui_widgets.cpp
-    imgui/backends/imgui_impl_glfw.cpp
-    imgui/backends/imgui_impl_opengl3.cpp
+    include/imgui/imgui.cpp
+    include/imgui/imgui_demo.cpp
+    include/imgui/imgui_draw.cpp
+    include/imgui/imgui_tables.cpp
+    include/imgui/imgui_widgets.cpp
+    include/imgui/backends/imgui_impl_glfw.cpp
+    include/imgui/backends/imgui_impl_opengl3.cpp
 )
+# The public include directories have also been updated to the new path.
 target_include_directories(imgui PUBLIC
-    ${PROJECT_SOURCE_DIR}/imgui
-    ${PROJECT_SOURCE_DIR}/imgui/backends
+    ${PROJECT_SOURCE_DIR}/include/imgui
+    ${PROJECT_SOURCE_DIR}/include/imgui/backends
 )
 target_compile_definitions(imgui PRIVATE IMGUI_IMPL_OPENGL_LOADER_GLAD)
 target_link_libraries(imgui PUBLIC glfw OpenGL::GL)
 
 # --- ImPlot Library ---
+# The source files are now located under the `include/implot` directory.
 add_library(implot STATIC
-    implot/implot.cpp
-    implot/implot_items.cpp
-    implot/implot_demo.cpp
+    include/implot/implot.cpp
+    include/implot/implot_items.cpp
+    include/implot/implot_demo.cpp
 )
+# The public include directories have also been updated to the new path.
 target_include_directories(implot PUBLIC
-    ${PROJECT_SOURCE_DIR}/implot
-    ${PROJECT_SOURCE_DIR}/imgui
+    ${PROJECT_SOURCE_DIR}/include/implot
+    ${PROJECT_SOURCE_DIR}/include/imgui
 )
 target_link_libraries(implot PUBLIC imgui)
 
 # --- ImPlot3D Library ---
+# The source files are now located under the `include/implot3d` directory.
 add_library(implot3d STATIC
-    implot3d/implot3d.cpp
-    implot3d/implot3d_items.cpp
-    implot3d/implot3d_demo.cpp
-    implot3d/implot3d_meshes.cpp
+    include/implot3d/implot3d.cpp
+    include/implot3d/implot3d_items.cpp
+    include/implot3d/implot3d_demo.cpp
+    include/implot3d/implot3d_meshes.cpp
 )
+# The public include directories have also been updated to the new path.
 target_include_directories(implot3d PUBLIC
-    ${PROJECT_SOURCE_DIR}/implot3d
-    ${PROJECT_SOURCE_DIR}/implot
-    ${PROJECT_SOURCE_DIR}/imgui
+    ${PROJECT_SOURCE_DIR}/include/implot3d
+    ${PROJECT_SOURCE_DIR}/include/implot
+    ${PROJECT_SOURCE_DIR}/include/imgui
 )
 target_link_libraries(implot3d PUBLIC implot)
 
