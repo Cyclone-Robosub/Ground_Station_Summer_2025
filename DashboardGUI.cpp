@@ -190,34 +190,44 @@ int DashboardGUI::Startup()
         // Example date for plotting
         static LimitedTrajectory robot_trajectory("Robot Position", 1000);
         float coordinates[3];
-        coordinates[0] = (float)ImGui::GetTime() / 10;
-        coordinates[1] = (float)ImGui::GetTime() / 10;
-        coordinates[2] = (float)ImGui::GetTime() / 10;
+	std::shared_ptr<Position> Destination = ComponentStructPointer->LocationData.CurrentWaypoint.load(std::memory_order_acquire);
+	std::shared_ptr<Position> givenPosition = ComponentStructPointer->LocationData.CurrentPosition.load(std::memory_order_acquire);
+	if(Destination != nullptr){
+        coordinates[0] = Destination->get_x();
+        coordinates[1] = Destination->get_y();
+        coordinates[2] = Destination->get_z();
         robot_trajectory.addPoint(coordinates); 
-
+	}
         static LimitedTrajectory waypoints("Waypoints", 1000);
         float waypoint_coordinates[3];
-        waypoint_coordinates[0] = (float)ImGui::GetTime() / 10 + 1;
-        waypoint_coordinates[1] = (float)ImGui::GetTime() / 10;
-        waypoint_coordinates[2] = (float)ImGui::GetTime() / 10;
+	if(givenPosition != nullptr){
+        waypoint_coordinates[0] = givenPosition->get_x();
+        waypoint_coordinates[1] = givenPosition->get_y();
+        waypoint_coordinates[2] = givenPosition->get_z();
         waypoints.addPoint(waypoint_coordinates); 
-
+	}
         plotLines(robot_trajectory, waypoints);
 
-        
         static MessageLogger robotController("Robot Controller"); 
-        
+       
+
+//PWM Logging
+		
+	std::stringstream PWMmessage;
         static bool is_initialized = false;
         if (!is_initialized) {
             robotController.AddSystemMessage("PWM", "PWM controller initialized");
             is_initialized = true;
         }
-
+	if(is_initialized){
+		std::shared_ptr<int[8]> givenPWM = ComponentStructPointer->ThrustData.CurrentPWM.load(std::memory_order_acquire);if(givenPWM != nullptr){	
+		PWMmessage << "PWM received: [" << givenPWM[0] << ", " << givenPWM[1] <<", " <<  givenPWM[2] << ", " << givenPWM[3] << ", " << givenPWM[4] << ", " << givenPWM[5] << ", " << givenPWM[6] << ", " << givenPWM[7] << "]";
+		std::string PWM_string = PWMmessage.str();
+		robotController.AddSystemMessage("PWM", PWM_string);}
+	}
+	
         // robotController.AddSystemMessage("Waypoint", "Waypoint received: [1.0, 2.0, 3.0]");
-        
-        #include <sstream>
-        #include <iomanip>
-        std::stringstream ss;
+	std::stringstream ss; 
 
         // 2. Build the string with the desired formatting
         ss << "Waypoint received: ["
@@ -231,6 +241,10 @@ int DashboardGUI::Startup()
 
         // 4. Pass the formatted string to the AddSystemMessage function
         robotController.AddSystemMessage("Waypoint", formatted_message);
+
+
+
+	//5. Render all the system messages.
         robotController.Render();
 
         // DemoLinePlots();
