@@ -1,4 +1,5 @@
 #include "MessageLogger.hpp"
+#include "ConfigurationPanel.hpp"
 #include "imgui.h"
 #include <algorithm>
 #include <iomanip>
@@ -28,10 +29,9 @@ MessageLogger::MessageLogger(const std::string& system_name)
 
 // Private helper to display the current message
 void MessageLogger::DisplayCurrentMessage(const SystemLog& log) {
-    auto text_color = ImVec4(0.8f, 1.0f, 0.8f, 1.0f);
     ImGui::TextDisabled("[%s]", FormatTimestamp(log.current_message.timestamp).c_str());
     ImGui::SameLine();
-    ImGui::TextColored(text_color, "%s", log.current_message.text.c_str());
+    ImGui::TextColored(highlightColor, "%s", log.current_message.text.c_str());
 }
 
 // Private helper to display prior messages

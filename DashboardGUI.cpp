@@ -88,8 +88,8 @@ int DashboardGUI::Startup()
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
     // Setup Dear ImGui style
-    ImGui::StyleColorsDark();
-    //ImGui::StyleColorsLight();
+    // ImGui::StyleColorsDark();
+    ImGui::StyleColorsLight();
 
     // Setup scaling
     ImGuiStyle& style = ImGui::GetStyle();
@@ -124,6 +124,7 @@ int DashboardGUI::Startup()
     bool show_demo_window = false;
     bool show_3ddemo_window = false;
     bool native_sample_data = true;
+    bool dark_mode = true;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     // Main loop
@@ -293,7 +294,7 @@ int DashboardGUI::Startup()
         static float battery_threshold = 12.0f; // Example threshold value
         RenderBatteryMonitor(ComponentStructPointer->BatteryData);
         
-        RenderConfigurationPanel(io, show_demo_window, show_3ddemo_window);
+        RenderConfigurationPanel(io, show_demo_window, show_3ddemo_window, dark_mode);
 
         // Rendering
         ImGui::Render();
