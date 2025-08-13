@@ -16,12 +16,16 @@ void DashboardController::SetupROS()
     WaypointOptions.callback_group = callbackExecutive;
     auto TaskOptions = rclcpp::SubscriptionOptions();
     TaskOptions.callback_group = callbackExecutive;
+    auto PositionOptions = rclcpp::SubscriptionOptions();
+    PositionOptions.callback_group = callbackExecutive;
 
     SOCsub = this->create_subscription<std_msgs::msg::Float64>("SOCTopic", 10, std::bind(&DashboardController::getSOC, this, std::placeholders::_1), CurrentOptions);
     SOCINTsub = this->create_subscription<std_msgs::msg::Bool>("SOCIntTopic", 10, std::bind(&DashboardController::getSOCINT, this, std::placeholders::_1), CurrentINTOptions);
     WaypointSub = this->create_subscription<std_msgs::msg::Float32MultiArray>("waypoint_topic", 10, std::bind(&DashboardController::getWaypoint, this, std::placeholders::_1), WaypointOptions);
     CurrentTaskSub = this->create_subscription<std_msgs::msg::String>("CurrentTaskTopic", 10, std::bind(&DashboardController::getCurrentTask, this, std::placeholders::_1), TaskOptions);
+    PositionSub = 
     // manipulation
+     this->create_subscription<std_msgs::msg::Float32MultiArray>("position_topic", 10, std::bind(&DashboardController::getPosition, this, std::placeholders::_1), PositionOptions);
     // Vision
 }
 void DashboardController::Controller()
@@ -90,7 +94,7 @@ void DashboardController::getWaypoint(const std_msgs::msg::Float32MultiArray::Sh
 {
     std::array<float, 6> arr;
     std::copy_n(msg->data.begin(), 6, arr.begin());
-    ComponentStruct->LocationData.CurrentWaypoint.store(std::make_shared<std::array<float, 6>>(arr), std::memory_order_release);
+    ComponentStruct->LocationData.CurrentWaypoint.store(std::make_shared<Position>(arr), std::memory_order_release);
 }
 
 void DashboardController::getCurrentTask(const std_msgs::msg::String::SharedPtr msg)

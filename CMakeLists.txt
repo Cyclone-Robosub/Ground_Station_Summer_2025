@@ -87,8 +87,8 @@ add_executable(DashboardExecutable
     components/ConfigurationPanel.cpp
     components/RobotPlotting.cpp
     StructComponents.hpp
+    ../crs_common/position/position.cpp
 )
-
 # Use ament_target_dependencies to handle ROS 2 dependencies correctly
 ament_target_dependencies(DashboardExecutable
     rclcpp

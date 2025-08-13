@@ -10,6 +10,7 @@
 #include <string>
 #include <atomic>
 #include "StructComponents.hpp"
+#include "../crs_common/position/position.hpp"
 /// @todo : multithreadexecutor for multiple subscribers.
 ///         Subscription Options
 ///         
@@ -29,12 +30,14 @@ private:
   rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr SOCsub;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr SOCINTsub;
   rclcpp::Subscription<std_msgs::msg::Float32MultiArray>::SharedPtr WaypointSub;
+  rclcpp::Subscription<std_msgs::msg::Float32MultiArray>::SharedPtr PositionSub;
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr CurrentTaskSub;
   rclcpp::Subscription<std_msgs::msg::Int64>::SharedPtr ManipulationSub;
 
   void getSOC(const std_msgs::msg::Float64::SharedPtr msg);
   void getSOCINT(const std_msgs::msg::Bool::SharedPtr msg);
   void getWaypoint(const std_msgs::msg::Float32MultiArray::SharedPtr msg);
+  void getPosition(const std_msgs::msg::Float32MultiArray::SharedPtr msg);
   void getCurrentTask(const std_msgs::msg::String::SharedPtr msg);
   void getMainipulation(const std_msgs::msg::Int64::SharedPtr msg);
   bool isRobotRunning;

@@ -3,6 +3,7 @@
 #include <memory>
 #include <mutex>
 #include <vector>
+#include "../crs_common/position/position.hpp"
 struct BatteryStruct
 {
     std::atomic<float> battery_voltage;
@@ -14,8 +15,8 @@ struct BatteryStruct
 struct LocationStruct
 {
     std::atomic<std::shared_ptr<std::string>> CurrentTask;
-    std::atomic<std::shared_ptr<std::array<float, 6>>> CurrentWaypoint;
-    std::atomic<std::shared_ptr<std::array<float, 6>>> CurrentPosition;
+    std::atomic<std::shared_ptr<Position>> CurrentWaypoint;
+    std::atomic<std::shared_ptr<Position>> CurrentPosition;
 };
 /*
 struct SystemStatuses {
