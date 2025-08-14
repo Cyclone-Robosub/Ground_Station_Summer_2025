@@ -250,6 +250,15 @@ int DashboardGUI::Startup()
 	//5. Render all the system messages.
         robotController.Render();
 
+        float test_position = (float)ImGui::GetTime() / 10;
+        float test_waypoint = (float)ImGui::GetTime() / 9;
+
+        static TrajectoryComparisonPlot position_plot("X-Axis Position", 1000);
+        position_plot.AddCurrentPosition(test_position);
+        position_plot.AddWaypoint(test_waypoint);
+        position_plot.RenderPlot();
+
+
         // DemoLinePlots();
 
         // Sample data for status indicators

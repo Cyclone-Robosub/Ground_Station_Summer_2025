@@ -86,6 +86,7 @@ add_executable(DashboardExecutable
     components/MessageLogger.cpp
     components/ConfigurationPanel.cpp
     components/MultiAxisPlotting.cpp
+    components/SingleAxisPlotting.cpp
     StructComponents.hpp
     ../crs_common/position/position.cpp
 )

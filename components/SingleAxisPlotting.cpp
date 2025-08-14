@@ -45,6 +45,25 @@ float Point::getCoordinate() const {
     return coordinate_;
 }
 
+std::vector<float> Trajectory::getCoordinates() const {
+    std::vector<float> coordinates;
+    for (const auto& point : points_) {
+        coordinates.push_back(point.getCoordinate());
+    }
+    return coordinates;
+}
+
+std::vector<float> Trajectory::getTimestampsMilliseconds() const {
+    std::vector<float> timestamps;
+    for (const auto& point : points_) {
+        auto duration = point.getTimestamp().time_since_epoch();
+        auto nanoseconds = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+        timestamps.push_back(static_cast<float>(nanoseconds));
+    }
+    return timestamps;
+}
+
+
 std::chrono::steady_clock::time_point Point::getTimestamp() const {
     return timestamp_;
 }
@@ -54,11 +73,13 @@ void TrajectoryComparisonPlot::RenderPlot() {
     if (ImPlot::BeginPlot((name_ + " Trajectory").c_str())) {
         ImPlot::SetupAxes("Time", "Position", ImPlotAxisFlags_AutoFit, ImPlotAxisFlags_AutoFit);
         if (!waypoints_->getPoints().empty()) {
-            ImPlot::PlotLine("Waypoints", waypoints_->getPoints(), static_cast<int>(waypoints_->getPoints().size()));
+            ImPlot::PlotLine("Waypoints", waypoints_->getCoordinates().data(), 
+            waypoints_->getTimestampsMilliseconds().data(), 
+            static_cast<int>(waypoints_->getPoints().size()));
         }
         if (!positions_->getPoints().empty()) {
             ImPlot::SetNextLineStyle(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), 2.0f); // Red line for current position
-            ImPlot::PlotLine("Current Position", positions_->getPoints().data(), static_cast<int>(positions_->getPoints().size()));
+            ImPlot::PlotLine("Current Position", positions_->getCoordinates().data(), static_cast<int>(positions_->getPoints().size()));
         }
         ImPlot::EndPlot();
     }
