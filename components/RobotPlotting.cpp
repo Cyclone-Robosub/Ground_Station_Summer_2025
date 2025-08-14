@@ -7,8 +7,12 @@
 #include "imgui.h"
 
 void DemoLinePlots() {
-    static float xs1[13], ys1[13], zs1[13];
-    for (int i = 0; i < 13; i++) {
+
+    // ImPlot3DStyle& style = ImPlot3D::GetStyle();
+    // style.LineWeight = 5.0f;
+    
+    static float xs1[500], ys1[500], zs1[500];
+    for (int i = 0; i < 500; i++) {
         xs1[i] = i * 0.001f;
         ys1[i] = 0.5f + 0.5f * cosf(50 * (xs1[i] + (float)ImGui::GetTime() / 10));
         zs1[i] = 0.5f + 0.5f * sinf(50 * (xs1[i] + (float)ImGui::GetTime() / 10));
@@ -21,7 +25,7 @@ void DemoLinePlots() {
     }
     if (ImPlot3D::BeginPlot("Line Plots")) {
         ImPlot3D::SetupAxes("x", "y", "z");
-        ImPlot3D::PlotLine("f(x)", xs1, ys1, zs1, 13);
+        ImPlot3D::PlotLine("f(x)", xs1, ys1, zs1, 500);
         ImPlot3D::SetNextMarkerStyle(ImPlot3DMarker_Circle);
         ImPlot3D::PlotLine("g(x)", xs2, ys2, zs2, 20, ImPlot3DLineFlags_Segments);
         ImPlot3D::EndPlot();
@@ -55,6 +59,13 @@ void plotLines(const LimitedTrajectory& robot_position, const LimitedTrajectory&
     ImGui::Begin("Robot Trajectory Plots");
     if (ImPlot3D::BeginPlot("Robot Position Trajectory")) {
         ImPlot3D::SetupAxes("x", "y", "z");
+
+        ImPlot3DStyle& style = ImPlot3D::GetStyle();
+        style.LineWeight = 2.0f;
+
+        // ImPlot3DNextItemData::LineWeight = 2.0f;
+        // &ImPlot3D::style.LineWeight;
+        // ImPlot3D::LineWeight(2.0f);
         ImPlot3D::PlotLine("Robot Position", robot_position.getXs().data(), robot_position.getYs().data(), robot_position.getZs().data(),
                            (int)robot_position.getXs().size(), ImPlot3DLineFlags_None);
         ImPlot3D::PlotLine("Waypoints", waypoints.getXs().data(), waypoints.getYs().data(), waypoints.getZs().data(),
