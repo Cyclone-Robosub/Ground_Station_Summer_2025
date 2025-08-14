@@ -2,7 +2,7 @@
 #include <algorithm> // For std::rotate
 #include <math.h>
 
-#include "RobotPlotting.hpp"
+#include "Robot3DPlotting.hpp"
 #include "implot3d.h"
 #include "imgui.h"
 

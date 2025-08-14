@@ -11,7 +11,7 @@
 #include "components/BatteryMonitor.hpp"
 #include "components/MessageLogger.hpp"
 #include "components/ConfigurationPanel.hpp"
-#include "components/RobotPlotting.hpp"
+#include "components/Robot3DPlotting.hpp"
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -82,6 +82,7 @@ int DashboardGUI::Startup()
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
+    ImPlot::CreateContext();
     ImPlot3D::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
@@ -329,6 +330,7 @@ int DashboardGUI::Startup()
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImPlot3D::DestroyContext();
+    ImPlot::DestroyContext();
     ImGui::DestroyContext();
 
     glfwDestroyWindow(window);
