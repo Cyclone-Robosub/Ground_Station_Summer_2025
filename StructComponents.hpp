@@ -20,7 +20,7 @@ struct LocationStruct
 };
 struct ThrustStruct
 {
-	std::atomic<std::shared_ptr<int[8]>> CurrentPWM;
+	std::atomic<std::shared_ptr<std::array<int,8>>> CurrentPWM;
 };
 /*
 struct SystemStatuses {
