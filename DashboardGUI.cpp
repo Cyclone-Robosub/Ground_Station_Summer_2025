@@ -124,7 +124,8 @@ int DashboardGUI::Startup()
 
     // Our state
     bool show_demo_window = false;
-    bool show_3ddemo_window = false;
+    bool show_demo_plots = false;
+    bool show_demo_3dplot = false;
     bool native_sample_data = true;
     bool dark_mode = true;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
@@ -228,6 +229,7 @@ int DashboardGUI::Startup()
 	else{
 		std::shared_ptr<std::array<int,8>> givenPWM = ComponentStructPointer->ThrustData.CurrentPWM.load(std::memory_order_acquire);if(givenPWM != nullptr){	
 		PWMmessage << "PWM received: [" << (*givenPWM)[0] << ", " << (*givenPWM)[1] <<", " <<  (*givenPWM)[2] << ", " << (*givenPWM)[3] << ", " << (*givenPWM)[4] << ", " << (*givenPWM)[5] << ", " << (*givenPWM)[6] << ", " << (*givenPWM)[7] << "]";
+
 		std::string PWM_string = PWMmessage.str();
 		robotController.AddSystemMessage("PWM", PWM_string);}
 	}
@@ -286,7 +288,7 @@ int DashboardGUI::Startup()
         position_plot.RenderPlot();
 	}
 
-        // DemoLinePlots();
+        // Demo3DLinePlots();
 
         // Sample data for status indicators
         static std::vector<std::string> master_statuses = {
@@ -345,8 +347,10 @@ int DashboardGUI::Startup()
 
         static float battery_threshold = 12.0f; // Example threshold value
         RenderBatteryMonitor(ComponentStructPointer->BatteryData);
+
+        DemoLinePlots();
         
-        RenderConfigurationPanel(io, show_demo_window, show_3ddemo_window, dark_mode);
+        RenderConfigurationPanel(io, show_demo_window, show_demo_plots, show_demo_3dplot, dark_mode);
 
         // Rendering
         ImGui::Render();

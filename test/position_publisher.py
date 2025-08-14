@@ -93,6 +93,7 @@ class PositionPublisher(Node):
             msg = Float32MultiArray()
             msgPWM = Int32MultiArray()
             msgPosition = Float32MultiArray()
+
             # Populate the layout field to describe the data structure.
             # Here, it's a 1D array of 3 elements.
             msg.layout = MultiArrayLayout(
