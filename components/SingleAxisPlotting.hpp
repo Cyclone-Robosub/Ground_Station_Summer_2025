@@ -46,3 +46,7 @@ private:
   std::unique_ptr<Trajectory> positions_;
   
 };
+
+struct ScrollingBuffer;
+
+void DemoLinePlots();

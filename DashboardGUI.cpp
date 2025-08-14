@@ -262,7 +262,7 @@ int DashboardGUI::Startup()
         position_plot.RenderPlot();
 
 
-        // DemoLinePlots();
+        // Demo3DLinePlots();
 
         // Sample data for status indicators
         static std::vector<std::string> master_statuses = {
@@ -321,6 +321,8 @@ int DashboardGUI::Startup()
 
         static float battery_threshold = 12.0f; // Example threshold value
         RenderBatteryMonitor(ComponentStructPointer->BatteryData);
+
+        DemoLinePlots();
         
         RenderConfigurationPanel(io, show_demo_window, show_demo_plots, show_demo_3dplot, dark_mode);
 

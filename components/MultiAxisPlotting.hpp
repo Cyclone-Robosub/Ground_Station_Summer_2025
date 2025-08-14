@@ -3,7 +3,7 @@
 #include <cstddef> // For size_t
 #include <string>
 
-void DemoLinePlots();
+void Demo3DLinePlots();
 
 class LimitedTrajectory {
 public:
