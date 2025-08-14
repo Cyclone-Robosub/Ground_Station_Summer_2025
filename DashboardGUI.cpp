@@ -11,7 +11,8 @@
 #include "components/BatteryMonitor.hpp"
 #include "components/MessageLogger.hpp"
 #include "components/ConfigurationPanel.hpp"
-#include "components/Robot3DPlotting.hpp"
+#include "components/MultiAxisPlotting.hpp"
+#include "components/SingleAxisPlotting.hpp"
 #include <string>
 #include <vector>
 #include <algorithm>
