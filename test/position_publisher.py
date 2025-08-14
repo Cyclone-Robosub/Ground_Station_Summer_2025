@@ -29,6 +29,7 @@ class PositionPublisher(Node):
         # Create a publisher on the 'position_topic' with a queue size of 10.
         # The message type is std_msgs/msg/Float32MultiArray.
         self.publisher_ = self.create_publisher(Float32MultiArray, 'waypoint_topic', 10)
+        self.positionPublisher_ = self.create_publisher(Float32MultiArray,'position_topic', 10)
         self.PWMpublisher_ = self.create_publisher(Int32MultiArray, 'sent_pwm_topic', 10)
         # A list to store the position data from the file.
         self.positions = []
@@ -91,7 +92,8 @@ class PositionPublisher(Node):
             # Create a new Float32MultiArray message and populate it.
             msg = Float32MultiArray()
             msgPWM = Int32MultiArray()
-            
+            msgPosition = Float32MultiArray()
+
             # Populate the layout field to describe the data structure.
             # Here, it's a 1D array of 3 elements.
             msg.layout = MultiArrayLayout(
@@ -101,9 +103,11 @@ class PositionPublisher(Node):
 
             # Assign the data as a list of floats.
             msg.data = [float(x), float(y), float(z)]
+            msgPosition.data = [float(x + 1), float(y + 1), float(z + 1)] 
             msgPWM.data = [54, 45, 25, 1500, 1588, 1200, 800, 900]
             # Publish the message.
             self.publisher_.publish(msg)
+            self.positionPublisher_.publish(msgPosition)
             self.PWMpublisher_.publish(msgPWM)
             
             # Log the published data for verification.

@@ -192,25 +192,25 @@ int DashboardGUI::Startup()
         generalLogger.Render();
         
         // Example date for plotting
-        static LimitedTrajectory robot_trajectory("Robot Position", 1000);
-        float coordinates[3];
-	std::shared_ptr<Position> Destination = ComponentStructPointer->LocationData.CurrentWaypoint.load(std::memory_order_acquire);
+        static LimitedTrajectory robot_waypoint("Desired Waypoint", 1000);
+        float waypoint_coordinates[3];
+	std::shared_ptr<Position> Destination = ComponentStructPointer->LocationData.CurrentWaypoint.load(std::memory_order_acquire); 
 	std::shared_ptr<Position> givenPosition = ComponentStructPointer->LocationData.CurrentPosition.load(std::memory_order_acquire);
 	if(Destination != nullptr){
-        coordinates[0] = Destination->get_x();
-        coordinates[1] = Destination->get_y();
-        coordinates[2] = Destination->get_z();
-        robot_trajectory.addPoint(coordinates); 
+        waypoint_coordinates[0] = Destination->get_x();
+        waypoint_coordinates[1] = Destination->get_y();
+        waypoint_coordinates[2] = Destination->get_z();
+        robot_waypoint.addPoint(waypoint_coordinates); 
 	}
-        static LimitedTrajectory waypoints("Waypoints", 1000);
-        float waypoint_coordinates[3];
+        static LimitedTrajectory robot_position("Current Position", 1000);
+        float position_coordinates[3];
 	if(givenPosition != nullptr){
-        waypoint_coordinates[0] = givenPosition->get_x();
-        waypoint_coordinates[1] = givenPosition->get_y();
-        waypoint_coordinates[2] = givenPosition->get_z();
-        waypoints.addPoint(waypoint_coordinates); 
+        position_coordinates[0] = givenPosition->get_x();
+        position_coordinates[1] = givenPosition->get_y();
+        position_coordinates[2] = givenPosition->get_z();
+        robot_position.addPoint(position_coordinates); 
 	}
-        plotLines(robot_trajectory, waypoints);
+        plotLines(robot_position, robot_waypoint);
 
         static MessageLogger robotController("Robot Controller"); 
        
@@ -219,48 +219,74 @@ int DashboardGUI::Startup()
 		
 	std::stringstream PWMmessage;
         static bool is_initialized = false;
-        if (!is_initialized) {
+	if(!is_initialized){
+	if(ComponentStructPointer->ThrustData.CurrentPWM.load(std::memory_order_acquire) == nullptr){
+		is_initialized = false;
+	}else{
             robotController.AddSystemMessage("PWM", "PWM controller initialized");
-            is_initialized = true;
-        }
-	if(is_initialized){
+		is_initialized = true;
+	}}
+	else{
 		std::shared_ptr<std::array<int,8>> givenPWM = ComponentStructPointer->ThrustData.CurrentPWM.load(std::memory_order_acquire);if(givenPWM != nullptr){	
-		PWMmessage << "PWM received: [" << (*givenPWM)[0] << ", " << (*givenPWM)[1] <<", " <<  (*givenPWM)[2] << ", " << (*givenPWM)[3] << ", " << (*givenPWM)[4] << ", " << (*givenPWM)[6] << ", " << (*givenPWM)[7] << ", " << (*givenPWM)[8] << "]";
+		PWMmessage << "PWM received: [" << (*givenPWM)[0] << ", " << (*givenPWM)[1] <<", " <<  (*givenPWM)[2] << ", " << (*givenPWM)[3] << ", " << (*givenPWM)[4] << ", " << (*givenPWM)[5] << ", " << (*givenPWM)[6] << ", " << (*givenPWM)[7] << "]";
+
 		std::string PWM_string = PWMmessage.str();
 		robotController.AddSystemMessage("PWM", PWM_string);}
 	}
-	
+//Position Logging
+	std::stringstream Positionmessage;
+	static bool is_initializedPosition = false;
+	if(!is_initializedPosition){
+	if(ComponentStructPointer->LocationData.CurrentPosition.load(std::memory_order_acquire) == nullptr){
+		is_initializedPosition = false;
+	}else{
+		robotController.AddSystemMessage("Position", "Current Position initialized");
+		is_initializedPosition = true;
+	}}
+	else{	
+	givenPosition = ComponentStructPointer->LocationData.CurrentPosition.load(std::memory_order_acquire);
+        position_coordinates[0] = givenPosition->get_x();
+        position_coordinates[1] = givenPosition->get_y();
+        position_coordinates[2] = givenPosition->get_z();
+        Positionmessage << "Position received: ["
+        << std::fixed << std::setprecision(5) << position_coordinates[0] << ", "
+        << std::fixed << std::setprecision(5) << position_coordinates[1] << ", "
+        << std::fixed << std::setprecision(5) << position_coordinates[2] << "]";
+	}
+	robotController.AddSystemMessage("Position", Positionmessage.str());
         // robotController.AddSystemMessage("Waypoint", "Waypoint received: [1.0, 2.0, 3.0]");
-	std::stringstream ss; 
-
-        // 2. Build the string with the desired formatting
-        ss << "Waypoint received: ["
-        << std::fixed << std::setprecision(5) << coordinates[0] << ", "
-        << std::fixed << std::setprecision(5) << coordinates[1] << ", "
-        << std::fixed << std::setprecision(5) << coordinates[2] << "]";
-
-        // 3. Get the final string from the stringstream
-        std::string formatted_message = ss.str();
-       
-
-        // 4. Pass the formatted string to the AddSystemMessage function
-        robotController.AddSystemMessage("Waypoint", formatted_message);
-
-
+	std::stringstream Waypointmessage;
+	static bool is_initializedWaypoint = false;
+	if(!is_initializedWaypoint){
+	if(ComponentStructPointer->LocationData.CurrentWaypoint.load(std::memory_order_acquire) == nullptr){
+		is_initializedWaypoint = false;
+	}else{
+		is_initializedWaypoint = true;
+		robotController.AddSystemMessage("DesiredWaypoint", "Desired Waypoint initialized");
+	}}
+	else{	
+	Destination  = ComponentStructPointer->LocationData.CurrentWaypoint.load(std::memory_order_acquire);
+        waypoint_coordinates[0] = Destination->get_x();
+        waypoint_coordinates[1] = Destination->get_y();
+        waypoint_coordinates[2] = Destination->get_z();
+        Waypointmessage << "Waypoint received: ["
+        << std::fixed << std::setprecision(5) << waypoint_coordinates[0] << ", "
+        << std::fixed << std::setprecision(5) << waypoint_coordinates[1] << ", "
+        << std::fixed << std::setprecision(5) << waypoint_coordinates[2] << "]";
+	robotController.AddSystemMessage("DesiredWaypoint", Waypointmessage.str());
+	}
 
 	//5. Render all the system messages.
         robotController.Render();
-
-        float test_position = (float)ImGui::GetTime() / 10;
-        float test_waypoint = (float)ImGui::GetTime() / 5;
-
-        // std::cout << "Test Position: " << test_position << ", Test Waypoint: " << test_waypoint << std::endl;
-
+	if(Destination != nullptr && givenPosition != nullptr){
+        float test_position = ComponentStructPointer->LocationData.CurrentPosition.load(std::memory_order::acquire)->get_x();
+        float test_waypoint = ComponentStructPointer->LocationData.CurrentWaypoint.load(std::memory_order::acquire)->get_x();
+	
         static TrajectoryComparisonPlot position_plot("X-Axis Position", 1000);
         position_plot.AddCurrentPosition(test_position);
         position_plot.AddWaypoint(test_waypoint);
         position_plot.RenderPlot();
-
+	}
 
         // Demo3DLinePlots();
 
