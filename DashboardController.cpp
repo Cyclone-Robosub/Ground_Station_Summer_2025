@@ -100,7 +100,6 @@ void DashboardController::getSOCINT(const std_msgs::msg::Bool::SharedPtr msg)
 
 void DashboardController::getWaypoint(const std_msgs::msg::Float32MultiArray::SharedPtr msg)
 {
-	std::cout << "waypoint" <<std::endl;
     std::array<float, 6> arr;
     std::copy_n(msg->data.begin(), 6, arr.begin());
     ComponentStruct->LocationData.CurrentWaypoint.store(std::make_shared<Position>(arr), std::memory_order_release);
