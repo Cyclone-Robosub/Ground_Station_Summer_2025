@@ -1,5 +1,5 @@
 #pragma once
-#include "../StructComponents.hpp"
+#include "../src/StructComponents.hpp"
 #include <string>
 #include <vector>
 

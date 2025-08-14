@@ -22,6 +22,7 @@ find_package(Threads REQUIRED)
 # -------------------------------------------------------------------------------------------------
 # Third-Party Dependencies (now in the 'include' subdirectory)
 # -------------------------------------------------------------------------------------------------
+# This will search for a system-installed GLFW library, as in the original file.
 find_package(glfw3 3.3 REQUIRED)
 find_package(OpenGL REQUIRED)
 
@@ -36,12 +37,13 @@ add_library(imgui STATIC
     include/imgui/backends/imgui_impl_glfw.cpp
     include/imgui/backends/imgui_impl_opengl3.cpp
 )
-# The public include directories have also been updated to the new path.
+# The public include directories have also been to the new path.
 target_include_directories(imgui PUBLIC
     ${PROJECT_SOURCE_DIR}/include/imgui
     ${PROJECT_SOURCE_DIR}/include/imgui/backends
 )
 target_compile_definitions(imgui PRIVATE IMGUI_IMPL_OPENGL_LOADER_GLAD)
+# ImGui now links against the system-installed GLFW library.
 target_link_libraries(imgui PUBLIC glfw OpenGL::GL)
 
 # --- ImPlot Library ---
@@ -79,16 +81,27 @@ target_link_libraries(implot3d PUBLIC implot)
 # -------------------------------------------------------------------------------------------------
 add_executable(DashboardExecutable
     main.cpp
-    DashboardController.cpp
-    DashboardGUI.cpp
+    # The following files have been moved to the `src` directory.
+    src/DashboardController.cpp
+    src/DashboardGUI.cpp
+    # These files remain in the project root.
     components/StatusIndicators.cpp
     components/BatteryMonitor.cpp
     components/MessageLogger.cpp
     components/ConfigurationPanel.cpp
     components/RobotPlotting.cpp
-    StructComponents.hpp
-    ../crs_common/position/position.cpp
 )
+
+# Add the `src`, `components`, and `crs_common` directories to the include path.
+# This fixes the "fatal error: No such file or directory" issues by allowing the compiler
+# to find headers using project-root relative paths (e.g., `#include "src/StructComponents.hpp"`).
+target_include_directories(DashboardExecutable PUBLIC
+    ${PROJECT_SOURCE_DIR}
+    ${PROJECT_SOURCE_DIR}/src
+    ${PROJECT_SOURCE_DIR}/components
+    ${PROJECT_SOURCE_DIR}/crs_common
+)
+
 # Use ament_target_dependencies to handle ROS 2 dependencies correctly
 ament_target_dependencies(DashboardExecutable
     rclcpp

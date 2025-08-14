@@ -1,3 +1,3 @@
 #pragma once
-#include "../StructComponents.hpp"
+#include "../src/StructComponents.hpp"
 void RenderBatteryMonitor(BatteryStruct &givenBatteryStruct);
