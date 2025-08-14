@@ -2,11 +2,11 @@
 #include <algorithm> // For std::rotate
 #include <math.h>
 
-#include "RobotPlotting.hpp"
+#include "MultiAxisPlotting.hpp"
 #include "implot3d.h"
 #include "imgui.h"
 
-void DemoLinePlots() {
+void Demo3DLinePlots() {
 
     // ImPlot3DStyle& style = ImPlot3D::GetStyle();
     // style.LineWeight = 5.0f;
