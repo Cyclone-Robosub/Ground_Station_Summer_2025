@@ -4,6 +4,7 @@ void DashboardController::SetupROS()
 {
     callbackBattery = this->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
     callbackExecutive = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
+    callbackThruster = this->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
     auto VoltageOptions = rclcpp::SubscriptionOptions();
     VoltageOptions.callback_group = callbackBattery;
 
@@ -11,17 +12,28 @@ void DashboardController::SetupROS()
     CurrentOptions.callback_group = callbackBattery;
     auto CurrentINTOptions = rclcpp::SubscriptionOptions();
     CurrentINTOptions.callback_group = callbackBattery;
+    auto VoltOptions = rclcpp::SubscriptionOptions();
+    VoltOptions.callback_group = callbackBattery;
 
     auto WaypointOptions = rclcpp::SubscriptionOptions();
     WaypointOptions.callback_group = callbackExecutive;
     auto TaskOptions = rclcpp::SubscriptionOptions();
     TaskOptions.callback_group = callbackExecutive;
+    auto PositionOptions = rclcpp::SubscriptionOptions();
+    PositionOptions.callback_group = callbackExecutive;
 
+    auto PWMOptions = rclcpp::SubscriptionOptions();
+    PWMOptions.callback_group = callbackThruster;
+
+   Voltsub = this->create_subscription<std_msgs::msg::Float64>("voltageReadingTopic", 10, std::bind(&DashboardController::getVolt, this, std::placeholders::_1), VoltOptions);
     SOCsub = this->create_subscription<std_msgs::msg::Float64>("SOCTopic", 10, std::bind(&DashboardController::getSOC, this, std::placeholders::_1), CurrentOptions);
     SOCINTsub = this->create_subscription<std_msgs::msg::Bool>("SOCIntTopic", 10, std::bind(&DashboardController::getSOCINT, this, std::placeholders::_1), CurrentINTOptions);
     WaypointSub = this->create_subscription<std_msgs::msg::Float32MultiArray>("waypoint_topic", 10, std::bind(&DashboardController::getWaypoint, this, std::placeholders::_1), WaypointOptions);
     CurrentTaskSub = this->create_subscription<std_msgs::msg::String>("CurrentTaskTopic", 10, std::bind(&DashboardController::getCurrentTask, this, std::placeholders::_1), TaskOptions);
-    // manipulation
+    PositionSub = 
+     this->create_subscription<std_msgs::msg::Float32MultiArray>("position_topic", 10, std::bind(&DashboardController::getPosition, this, std::placeholders::_1), PositionOptions);
+     PWMSub = 
+ 	this->create_subscription<std_msgs::msg::Int32MultiArray>("sent_pwm_topic", 10, std::bind(&DashboardController::getPWM, this, std::placeholders::_1),PWMOptions);
     // Vision
 }
 void DashboardController::Controller()
@@ -90,12 +102,26 @@ void DashboardController::getWaypoint(const std_msgs::msg::Float32MultiArray::Sh
 {
     std::array<float, 6> arr;
     std::copy_n(msg->data.begin(), 6, arr.begin());
-    ComponentStruct->LocationData.CurrentWaypoint.store(std::make_shared<std::array<float, 6>>(arr), std::memory_order_release);
+    ComponentStruct->LocationData.CurrentWaypoint.store(std::make_shared<Position>(arr), std::memory_order_release);
 }
-
+void DashboardController::getPosition(const std_msgs::msg::Float32MultiArray::SharedPtr msg)
+{
+	
+    std::array<float, 6> arr;
+    std::copy_n(msg->data.begin(), 6, arr.begin());
+    ComponentStruct->LocationData.CurrentPosition.store(std::make_shared<Position>(arr), std::memory_order_release);
+}
+void DashboardController::getVolt(const std_msgs::msg::Float64::SharedPtr msg){
+	ComponentStruct->BatteryData.battery_voltage.store(msg->data, std::memory_order_release);
+}
 void DashboardController::getCurrentTask(const std_msgs::msg::String::SharedPtr msg)
 {
     ComponentStruct->LocationData.CurrentTask.store(std::make_shared<std::string>(msg->data), std::memory_order_release);
+}
+void DashboardController::getPWM(const std_msgs::msg::Int32MultiArray::SharedPtr msg){
+	std::shared_ptr<int[8]> arr;
+	std::copy(msg->data.begin(), msg->data.begin() + 8, arr.get()); 
+	ComponentStruct->ThrustData.CurrentPWM.store(arr, std::memory_order_release);
 }
 // getposition
 

@@ -3,10 +3,11 @@
 #include <memory>
 #include <mutex>
 #include <vector>
+#include "../crs_common/position/position.hpp"
 struct BatteryStruct
 {
     std::atomic<float> battery_voltage;
-    std::atomic<float> battery_threshold{13.3f};
+    std::atomic<float> battery_threshold{13.8f};
     std::atomic<float> SOC;
     std::atomic<bool> SOCint{false};
     // std::atomic<StatusCondition> BatteryStatus;
@@ -14,8 +15,12 @@ struct BatteryStruct
 struct LocationStruct
 {
     std::atomic<std::shared_ptr<std::string>> CurrentTask;
-    std::atomic<std::shared_ptr<std::array<float, 6>>> CurrentWaypoint;
-    std::atomic<std::shared_ptr<std::array<float, 6>>> CurrentPosition;
+    std::atomic<std::shared_ptr<Position>> CurrentWaypoint;
+    std::atomic<std::shared_ptr<Position>> CurrentPosition;
+};
+struct ThrustStruct
+{
+	std::atomic<std::shared_ptr<int[8]>> CurrentPWM;
 };
 /*
 struct SystemStatuses {
@@ -48,4 +53,5 @@ struct StructofComponents
         {"Battery System", "standby", "System is on standby"},
         {"Location System", "standby", "System is on standby"}};
     LocationStruct LocationData;
+    ThrustStruct ThrustData;
 };

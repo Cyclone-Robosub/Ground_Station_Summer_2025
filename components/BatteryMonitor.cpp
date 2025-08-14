@@ -4,11 +4,11 @@
 
 void RenderBatteryMonitor(BatteryStruct &givenBatteryStruct) {
     ImGui::Begin("Battery Monitor");
-
+    float givenbatteryvoltage = givenBatteryStruct.battery_voltage.load(std::memory_order_acquire);
     // Display the battery voltage
-    ImGui::Text("Battery Voltage: %.2f V", givenBatteryStruct.battery_voltage.load());
+    ImGui::Text("Battery Voltage: %.2f V", givenbatteryvoltage);
     //TODO: Add coloring
-    ImGui::Text("Battery Status: %s", (givenBatteryStruct.battery_voltage.load() >  givenBatteryStruct.battery_threshold.load()) ? "Good" : "Low");
+    ImGui::Text("Battery Status: %s", (givenbatteryvoltage >  givenBatteryStruct.battery_threshold) ? "Good" : "Low");
 
     // Example voltage history data
     constexpr int history_size = 200;
@@ -16,7 +16,7 @@ void RenderBatteryMonitor(BatteryStruct &givenBatteryStruct) {
     static int history_index = 0;
 
     // Update voltage history with current value
-    voltage_history[history_index] = givenBatteryStruct.battery_voltage.load();
+    voltage_history[history_index] = givenbatteryvoltage;
     history_index = (history_index + 1) % history_size;
 
     ImGui::PlotLines("Voltage History", voltage_history, history_size, history_index, nullptr, 0.0f, 16.0f, ImVec2(0, 80));
