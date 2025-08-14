@@ -22,7 +22,7 @@ class Trajectory {
   void AddPoint(const float coordinate);
   std::vector <Point> getPoints() const;
   std::vector<float> getCoordinates() const;
-  std::vector<float> getTimestampsMilliseconds() const;
+  std::vector<float> getTimestampsSeconds() const;
   
   private:
   size_t max_points_;

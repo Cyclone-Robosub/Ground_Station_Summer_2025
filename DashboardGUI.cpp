@@ -251,7 +251,9 @@ int DashboardGUI::Startup()
         robotController.Render();
 
         float test_position = (float)ImGui::GetTime() / 10;
-        float test_waypoint = (float)ImGui::GetTime() / 9;
+        float test_waypoint = (float)ImGui::GetTime() / 5;
+
+        // std::cout << "Test Position: " << test_position << ", Test Waypoint: " << test_waypoint << std::endl;
 
         static TrajectoryComparisonPlot position_plot("X-Axis Position", 1000);
         position_plot.AddCurrentPosition(test_position);

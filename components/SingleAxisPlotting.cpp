@@ -1,9 +1,11 @@
 #include <vector>
 #include <algorithm> // For std::rotate
+#include <iostream>
 
 #include "SingleAxisPlotting.hpp"
 #include "imgui.h"
 #include "implot.h"
+
 // #include <memory>
 
 Trajectory::Trajectory(size_t max_points) : max_points_(max_points) {
@@ -42,6 +44,7 @@ Point::Point(float coordinate, std::chrono::steady_clock::time_point timestamp)
 {}
 
 float Point::getCoordinate() const {
+    // std::cout << "Getting coordinate: " << coordinate_ << std::endl;
     return coordinate_;
 }
 
@@ -53,11 +56,11 @@ std::vector<float> Trajectory::getCoordinates() const {
     return coordinates;
 }
 
-std::vector<float> Trajectory::getTimestampsMilliseconds() const {
+std::vector<float> Trajectory::getTimestampsSeconds() const {
     std::vector<float> timestamps;
     for (const auto& point : points_) {
         auto duration = point.getTimestamp().time_since_epoch();
-        auto nanoseconds = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+        auto nanoseconds = std::chrono::duration_cast<std::chrono::seconds>(duration).count();
         timestamps.push_back(static_cast<float>(nanoseconds));
     }
     return timestamps;
@@ -71,15 +74,23 @@ std::chrono::steady_clock::time_point Point::getTimestamp() const {
 void TrajectoryComparisonPlot::RenderPlot() {
     ImGui::Begin((name_ + " Plot").c_str());
     if (ImPlot::BeginPlot((name_ + " Trajectory").c_str())) {
-        ImPlot::SetupAxes("Time", "Position", ImPlotAxisFlags_AutoFit, ImPlotAxisFlags_AutoFit);
+        // ImPlot::SetupAxes("Time", "Position");
+        ImPlot::SetupAxes("Time", "Position", ImPlotAxisFlags_RangeFit, ImPlotAxisFlags_RangeFit);
+        ImPlot::SetupAxisScale(ImAxis_X1, ImPlotScale_Time);
+        // ImPlot::SetupAxesLimits(0,100,0,500);
+        // ImPlot::SetupAxes("Time", "Position", ImPlotAxisFlags_AutoFit, ImPlotAxisFlags_AutoFit);
         if (!waypoints_->getPoints().empty()) {
-            ImPlot::PlotLine("Waypoints", waypoints_->getCoordinates().data(), 
-            waypoints_->getTimestampsMilliseconds().data(), 
+            ImPlot::PlotLine("Waypoints", 
+            waypoints_->getTimestampsSeconds().data(), 
+            waypoints_->getCoordinates().data(), 
             static_cast<int>(waypoints_->getPoints().size()));
-        }
-        if (!positions_->getPoints().empty()) {
+          }
+          if (!positions_->getPoints().empty()) {
             ImPlot::SetNextLineStyle(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), 2.0f); // Red line for current position
-            ImPlot::PlotLine("Current Position", positions_->getCoordinates().data(), static_cast<int>(positions_->getPoints().size()));
+            ImPlot::PlotLine("Current Position", 
+              waypoints_->getTimestampsSeconds().data(), 
+              positions_->getCoordinates().data(), 
+              static_cast<int>(positions_->getPoints().size()));
         }
         ImPlot::EndPlot();
     }
