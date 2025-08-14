@@ -3,6 +3,7 @@
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import Int32MultiArray
 from std_msgs.msg import MultiArrayLayout
 from std_msgs.msg import MultiArrayDimension
 import os
@@ -22,13 +23,13 @@ class PositionPublisher(Node):
         
         # Declare and get the file path from a parameter. 
         # This makes the file path configurable without changing the code.
-        self.declare_parameter('file_path', 'position.txt')
+        self.declare_parameter('file_path', 'positions.txt')
         self.file_path = self.get_parameter('file_path').get_parameter_value().string_value
         
         # Create a publisher on the 'position_topic' with a queue size of 10.
         # The message type is std_msgs/msg/Float32MultiArray.
-        self.publisher_ = self.create_publisher(Float32MultiArray, 'position_topic', 10)
-        
+        self.publisher_ = self.create_publisher(Float32MultiArray, 'waypoint_topic', 10)
+        self.PWMpublisher_ = self.create_publisher(Int32MultiArray, 'sent_pwm_topic', 10)
         # A list to store the position data from the file.
         self.positions = []
         
@@ -89,6 +90,7 @@ class PositionPublisher(Node):
             
             # Create a new Float32MultiArray message and populate it.
             msg = Float32MultiArray()
+            msgPWM = Int32MultiArray()
             
             # Populate the layout field to describe the data structure.
             # Here, it's a 1D array of 3 elements.
@@ -99,9 +101,10 @@ class PositionPublisher(Node):
 
             # Assign the data as a list of floats.
             msg.data = [float(x), float(y), float(z)]
-            
+            msgPWM.data = [54, 45, 25, 1500, 1588, 1200, 800, 900]
             # Publish the message.
             self.publisher_.publish(msg)
+            self.PWMpublisher_.publish(msgPWM)
             
             # Log the published data for verification.
             self.get_logger().info(f'Publishing: data={msg.data}')

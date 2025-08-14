@@ -100,13 +100,14 @@ void DashboardController::getSOCINT(const std_msgs::msg::Bool::SharedPtr msg)
 
 void DashboardController::getWaypoint(const std_msgs::msg::Float32MultiArray::SharedPtr msg)
 {
+	std::cout << "waypoint" <<std::endl;
     std::array<float, 6> arr;
     std::copy_n(msg->data.begin(), 6, arr.begin());
     ComponentStruct->LocationData.CurrentWaypoint.store(std::make_shared<Position>(arr), std::memory_order_release);
 }
 void DashboardController::getPosition(const std_msgs::msg::Float32MultiArray::SharedPtr msg)
 {
-	
+    std::cout << "position" << std::endl;	
     std::array<float, 6> arr;
     std::copy_n(msg->data.begin(), 6, arr.begin());
     ComponentStruct->LocationData.CurrentPosition.store(std::make_shared<Position>(arr), std::memory_order_release);
@@ -119,9 +120,11 @@ void DashboardController::getCurrentTask(const std_msgs::msg::String::SharedPtr 
     ComponentStruct->LocationData.CurrentTask.store(std::make_shared<std::string>(msg->data), std::memory_order_release);
 }
 void DashboardController::getPWM(const std_msgs::msg::Int32MultiArray::SharedPtr msg){
-	std::shared_ptr<int[8]> arr;
-	std::copy(msg->data.begin(), msg->data.begin() + 8, arr.get()); 
-	ComponentStruct->ThrustData.CurrentPWM.store(arr, std::memory_order_release);
+	std::cout << "pwm" << std::endl;
+	std::array<int, 8> arr;
+	std::copy_n(msg->data.begin(),  8, arr.begin()); 
+	std::cout << "pwm Finish Copy" << std::endl;
+	ComponentStruct->ThrustData.CurrentPWM.store(std::make_shared<std::array<int,8>>(arr), std::memory_order_release);
 }
 // getposition
 

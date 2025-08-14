@@ -221,8 +221,8 @@ int DashboardGUI::Startup()
             is_initialized = true;
         }
 	if(is_initialized){
-		std::shared_ptr<int[8]> givenPWM = ComponentStructPointer->ThrustData.CurrentPWM.load(std::memory_order_acquire);if(givenPWM != nullptr){	
-		PWMmessage << "PWM received: [" << givenPWM[0] << ", " << givenPWM[1] <<", " <<  givenPWM[2] << ", " << givenPWM[3] << ", " << givenPWM[4] << ", " << givenPWM[5] << ", " << givenPWM[6] << ", " << givenPWM[7] << "]";
+		std::shared_ptr<std::array<int,8>> givenPWM = ComponentStructPointer->ThrustData.CurrentPWM.load(std::memory_order_acquire);if(givenPWM != nullptr){	
+		PWMmessage << "PWM received: [" << (*givenPWM)[0] << ", " << (*givenPWM)[1] <<", " <<  (*givenPWM)[2] << ", " << (*givenPWM)[3] << ", " << (*givenPWM)[4] << ", " << (*givenPWM)[6] << ", " << (*givenPWM)[7] << ", " << (*givenPWM)[8] << "]";
 		std::string PWM_string = PWMmessage.str();
 		robotController.AddSystemMessage("PWM", PWM_string);}
 	}
