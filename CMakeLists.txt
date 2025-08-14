@@ -10,6 +10,7 @@ set(EXPORT_COMPILE_COMMANDS ON)
 # -------------------------------------------------------------------------------------------------
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclpy REQUIRED)  # Added for Python support
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
@@ -112,6 +113,10 @@ target_link_libraries(DashboardExecutable
     OpenGL::GL
     Threads::Threads
 )
+
+# This command installs the Python package defined in setup.py
+# and makes its scripts available.
+ament_python_install_package(${PROJECT_NAME})
 
 # -------------------------------------------------------------------------------------------------
 # Installation and Export
