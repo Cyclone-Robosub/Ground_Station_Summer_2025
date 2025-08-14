@@ -85,7 +85,8 @@ add_executable(DashboardExecutable
     components/BatteryMonitor.cpp
     components/MessageLogger.cpp
     components/ConfigurationPanel.cpp
-    components/RobotPlotting.cpp
+    components/MultiAxisPlotting.cpp
+    components/SingleAxisPlotting.cpp
     StructComponents.hpp
     ../crs_common/position/position.cpp
 )
