@@ -132,13 +132,13 @@ void DashboardController::getPWM(const std_msgs::msg::Int32MultiArray::SharedPtr
 	std::copy_n(msg->data.begin(),  8, arr.begin());
 	ComponentStruct->ThrustData.CurrentPWM.store(std::make_shared<std::array<int,8>>(arr), std::memory_order_release);
 }
-void DashboardController::getSoftwareKS(const std_msg::Bool::SharedPtr msg){
+void DashboardController::getSoftwareKS(const std_msgs::msg::Bool::SharedPtr msg){
     isSoftwareKS = msg->data;
     std::lock_guard<std::mutex>(ComponentStruct->SystemStatusmutex);
     if(isSoftwareKS) {
     ComponentStruct->SystemStatusData[3].status = Danger;
     ComponentStruct->SystemStatusData[3].message = "Software Kill Switch Triggered.";
-    ComponentStruct->SystemStatusData[0].message = "Robot is currently software-killed."
+    ComponentStruct->SystemStatusData[0].message = "Robot is currently software-killed.";
     }else{
     ComponentStruct->SystemStatusData[3].status = Success;
     ComponentStruct->SystemStatusData[3].message = "Software Kill Switch NOT Triggered";

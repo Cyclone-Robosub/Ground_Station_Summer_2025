@@ -38,7 +38,9 @@ struct SystemStatuses {
 
 enum Status{
     Danger, Warning, Success, Standby
+	
 };
+std::string StatusToString(Status givenStatus);
 struct SystemStatus
 {
     std::string name;    // Name of the system (e.g., "Manipulator", "Vision")
@@ -56,10 +58,11 @@ struct StructofComponents
     // and more sharedptr<etc...>
     std::mutex SystemStatusmutex;
     std::vector<SystemStatus> SystemStatusData = {
-        {"Master Status", "standby", "System is on standby"},
-        {"Battery System", "standby", "System is on standby"},
-        {"Location System", "standby", "System is on standby"},
-        {"Software Kill Switch Status", "standby", "System is on standby"}};
+        {"Master Status", Standby, "System is on standby"},
+        {"Battery System", Standby, "System is on standby"},
+        {"Location System", Standby, "System is on standby"},
+        {"Software Kill Switch Status", Standby, "System is on standby"}
+    };
     LocationStruct LocationData;
     ThrustStruct ThrustData;
 };

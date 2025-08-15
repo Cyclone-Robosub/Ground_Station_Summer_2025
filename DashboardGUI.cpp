@@ -291,6 +291,7 @@ int DashboardGUI::Startup()
         // Demo3DLinePlots();
 
         // Sample data for status indicators
+        /*
         static std::vector<std::string> master_statuses = {
             "DANGER", "warning", "success", "standby"
         };
@@ -315,7 +316,7 @@ int DashboardGUI::Startup()
                 {"Robot Operations", "standby", "System 2 offline"},
                 {"Hardwar Status", "success", "System 3 is connected"}
             }
-        };
+        };*/
 
         static size_t status_idx = 0;
         static auto last_status_update = std::chrono::steady_clock::now();
@@ -326,7 +327,7 @@ int DashboardGUI::Startup()
             last_status_update = now_status;
         }
         std::unique_lock<std::mutex> lk(ComponentStructPointer->SystemStatusmutex);
-        std::string master_status = ComponentStructPointer->SystemStatusData[0].status;
+        Status master_status = ComponentStructPointer->SystemStatusData[0].status;
        // std::vector<SystemStatus> system_statuses = system_statuses_set[status_idx];
         
         RenderStatusIndicators(master_status, ComponentStructPointer->SystemStatusData);
