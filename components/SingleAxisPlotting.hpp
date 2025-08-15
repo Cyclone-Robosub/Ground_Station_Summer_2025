@@ -1,52 +1,43 @@
-#pragma once
-#include <vector> // For std::vector
-#include <cstddef> // For size_t
-#include <string>
-#include <memory> // For std::unique_ptr
-#include <chrono>
+#pragma once // Prevents the header from being included multiple times
 
-class Point {
-public:
-    Point(float coordinate, std::chrono::steady_clock::time_point timestamp);
-    float getCoordinate() const;
-    std::chrono::steady_clock::time_point getTimestamp() const;
+#include "imgui.h"
+#include "implot.h"
+#include <vector>
 
+// A utility struct for managing scrolling data buffers.
+struct ScrollingBuffer {
+    int MaxSize;
+    int Offset;
+    std::vector<ImVec2> Data;
+
+    // Constructor declaration
+    ScrollingBuffer(int max_size = 2000);
+    // Method declarations
+    void AddPoint(float x, float y);
+    void Erase();
+};
+
+// A class to encapsulate the plot's data and rendering logic.
+class RealTimePlot {
 private:
-    float coordinate_;
-    std::chrono::steady_clock::time_point timestamp_;
-};
+    // This is the internal clock for the plot.
+    float CurrentTime = 0.0f; 
 
-class Trajectory { 
-  public:
-  Trajectory(size_t max_points);
-  void AddPoint(const float coordinate);
-  std::vector <Point> getPoints() const;
-  std::vector<float> getCoordinates() const;
-  std::vector<float> getTimestampsSeconds() const;
-  
-  private:
-  size_t max_points_;
-  std::vector<Point> points_;
-};
-
-
-class TrajectoryComparisonPlot {
 public:
-    TrajectoryComparisonPlot(std::string name, size_t max_points = 2000);
+    // Data buffers for the plot series.
+    ScrollingBuffer DataX;
+    ScrollingBuffer DataY;
 
-    void AddWaypoint(const float waypoint);
-    void AddCurrentPosition(const float positions);
+    // Public properties to control the plot's appearance.
+    float History = 10.0f;
+    ImPlotAxisFlags X_AxisFlags = ImPlotAxisFlags_NoTickLabels;
+    ImPlotAxisFlags Y_AxisFlags = ImPlotAxisFlags_NoTickLabels;
 
-    void RenderPlot();
-    
-private:
-  size_t max_points_;
-  std::string name_;
-  std::unique_ptr<Trajectory> waypoints_;
-  std::unique_ptr<Trajectory> positions_;
-  
+    // Constructor declaration
+    RealTimePlot();
+
+    // Method declarations
+    void AddPosition(float value);
+    void AddWaypoint(float value);
+    void Render(const char* title);
 };
-
-struct ScrollingBuffer;
-
-void DemoLinePlots();
