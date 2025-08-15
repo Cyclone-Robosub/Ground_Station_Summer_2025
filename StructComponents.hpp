@@ -4,6 +4,9 @@
 #include <mutex>
 #include <vector>
 #include "../crs_common/position/position.hpp"
+
+
+
 struct BatteryStruct
 {
     std::atomic<float> battery_voltage;
@@ -32,10 +35,14 @@ struct SystemStatuses {
     std::vector<StatusCondition> StatusVector{3, StatusCondition::STANDBY};  // "DANGER", "warning", "success", "standby"
     std::vector<std::string> messages;  // e.g., "system is connected"
 };*/
+
+enum Status{
+    Danger, Warning, Success, Standby
+};
 struct SystemStatus
 {
     std::string name;    // Name of the system (e.g., "Manipulator", "Vision")
-    std::string status;  // "Danger", "warning", "success", "standby"
+    Status status;  // "Danger", "warning", "success", "standby"
     std::string message; // e.g., "system is connected"
 };
 struct ManipulationStruct
@@ -51,7 +58,8 @@ struct StructofComponents
     std::vector<SystemStatus> SystemStatusData = {
         {"Master Status", "standby", "System is on standby"},
         {"Battery System", "standby", "System is on standby"},
-        {"Location System", "standby", "System is on standby"}};
+        {"Location System", "standby", "System is on standby"},
+        {"Software Kill Switch Status", "standby", "System is on standby"}};
     LocationStruct LocationData;
     ThrustStruct ThrustData;
 };

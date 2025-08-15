@@ -50,4 +50,6 @@ private:
   void getPWM(const std_msgs::msg::Int32MultiArray::SharedPtr msg);
   bool isRobotRunning;
   std::atomic<bool> isControllerShutdown{false};
+  bool isSoftwareKS;
+  bool isHardwareKS;
 };
