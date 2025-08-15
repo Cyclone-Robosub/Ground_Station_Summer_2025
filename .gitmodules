@@ -7,3 +7,9 @@
 [submodule "implot3d"]
 	path = include/implot3d
 	url = https://github.com/brenocq/implot3d.git
+[submodule "crs_common"]
+	path = include/crs_common
+	url = https://github.com/Cyclone-Robosub/crs_common.git
+[submodule "glfw"]
+	path = include/glfw
+	url = https://github.com/glfw/glfw.git
