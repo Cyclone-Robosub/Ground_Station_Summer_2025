@@ -44,14 +44,23 @@ void DashboardController::SetupROS()
     SoftwareKSSub = 
     this->create_subscription<std_msgs::msg::Bool>("killstatus_topic", 10, 
     std::bind(&DashboardController::getSoftwareKS, this, std::placeholders::_1), SoftwareKSOptions);
+
+
+    //Publishers
+    X_Axis_Publisher = this->create_subscription<std_msgs::msg::Float32MultiArray>("X_axis_CLTool_Topic", 10); 
+    Y_Axis_Publisher = this->create_subscription<std_msgs::msg::Float32MultiArray>("Y_axis_CLTool_Topic", 10); 
+    Z_Axis_Publisher = this->create_subscription<std_msgs::msg::Float32MultiArray>("Z_axis_CLTool_Topic", 10); 
+    ROLL_Axis_Publisher = this->create_subscription<std_msgs::msg::Float32MultiArray>("roll_axis_CLTool_Topic", 10); 
+    PITCH_Axis_Publisher = this->create_subscription<std_msgs::msg::Float32MultiArray>("pitch_axis_CLTool_Topic", 10); 
+    YAW_Axis_Publisher =  this->create_subscription<std_msgs::msg::Float32MultiArray>("yaw_axis_CLTool_Topic", 10); 
     // Vision
 }
 void DashboardController::Controller()
 {
     while (!isControllerShutdown.load())
     {
-        // Robot not Running
-        if (ComponentStruct->LocationData.CurrentTask.load(std::memory_order_acquire) != nullptr)
+        // Robot not Running, See if Running
+        if (ComponentStruct->LocationData.CurrentTask. != nullptr)
         {
             isRobotRunning = true;
             std::lock_guard<std::mutex>(ComponentStruct->SystemStatusmutex);
@@ -61,17 +70,7 @@ void DashboardController::Controller()
                 i.status = Success;
             }
         }
-        std::lock_guard<std::mutex>(ComponentStruct->SystemStatusmutex);
-        for (auto i : ComponentStruct->SystemStatusData)
-        {
-            if (i.status == Danger)
-            {
-                ComponentStruct->SystemStatusData[0].status = Danger;
-                ComponentStruct->SystemStatusData[0].message = i.message;
-                break;
-            }
-        }
-        while (isRobotRunning)
+        if (isRobotRunning)
         {
             // Generate SystemStatusData vector
             std::lock_guard<std::mutex>(ComponentStruct->SystemStatusmutex);
@@ -85,11 +84,55 @@ void DashboardController::Controller()
                 }
             }
         }
+        if(!isRobotRunning){
         std::lock_guard<std::mutex>(ComponentStruct->SystemStatusmutex);
         for (auto i : ComponentStruct->SystemStatusData)
         {
             i.status = Standby;
         }
+        //DO REGARDLESS
+        auto msg = std_msgs::msg::Float32MultiArray();
+        msg.data.resize(8);
+        if(ComponentStruct->CLToolData.CLToolDataMutex.try_lock()){
+        if(ComponentStruct->CLToolData->x_axis_array != nullptr){
+            for(int i = 0; i < 8; i++){
+                msg.data[i] = ComponentStruct->CLToolData->x_axis_array[i];
+            }
+            X_Axis_Publisher->publish(msg);
+        }
+        if(ComponentStruct->CLToolData->y_axis_array != nullptr){
+            for(int i = 0; i < 8; i++){
+               msg.data[i] = ComponentStruct->CLToolData->y_axis_array[i];
+            }
+            Y_Axis_Publisher->publish(msg);
+        }
+        if(ComponentStruct->CLToolData->z_axis_array != nullptr){
+            for(int i = 0; i < 8; i++){
+               msg.data[i] = ComponentStruct->CLToolData->z_axis_array[i];
+            }
+            Z_Axis_Publisher->publish(msg);
+        }
+        if(ComponentStruct->CLToolData->roll_array != nullptr){
+            for(int i = 0; i < 8; i++){
+               msg.data[i] = ComponentStruct->CLToolData->roll_array[i];
+            }
+            ROLL_Axis_Publisher->publish(msg);
+        }
+        if(ComponentStruct->CLToolData->pitch_array != nullptr){
+            for(int i = 0; i < 8; i++){
+               msg.data[i] = ComponentStruct->CLToolData->pitch_array[i];
+            }
+            PITCH_Axis_Publisher->publish(msg);
+        }
+        if(ComponentStruct->CLToolData->yaw_array != nullptr){
+            for(int i = 0; i < 8; i++){
+               msg.data[i] = ComponentStruct->CLToolData->yaw_array[i];
+            }
+            YAW_Axis_Publisher->publish(msg);
+        }
+        ComponentStruct->CLToolData.CLToolDataMutex.unlock();
+    }
+    }
     }
 
     //

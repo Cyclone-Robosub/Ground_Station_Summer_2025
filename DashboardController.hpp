@@ -25,7 +25,7 @@ public:
 private:
   void SetupROS();
   std::shared_ptr<StructofComponents> ComponentStruct;
-
+  
   rclcpp::CallbackGroup::SharedPtr callbackBattery;
   rclcpp::CallbackGroup::SharedPtr callbackExecutive;
   rclcpp::CallbackGroup::SharedPtr callbackThruster;
@@ -35,12 +35,18 @@ private:
   rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr Voltsub;
   rclcpp::Subscription<std_msgs::msg::Float32MultiArray>::SharedPtr WaypointSub;
   rclcpp::Subscription<std_msgs::msg::Float32MultiArray>::SharedPtr PositionSub;
-
   rclcpp::Subscription<std_msgs::msg::Int32MultiArray>::SharedPtr PWMSub;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr SoftwareKSSub;
 
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr CurrentTaskSub;
   rclcpp::Subscription<std_msgs::msg::Int64>::SharedPtr ManipulationSub;
+
+  rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr X_Axis_Publisher;
+  rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr Y_Axis_Publisher;
+  rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr Z_Axis_Publisher;
+  rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr ROLL_Axis_Publisher;
+  rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr PITCH_Axis_Publisher;
+  rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr YAW_Axis_Publisher;
 
   void getSOC(const std_msgs::msg::Float64::SharedPtr msg);
   void getSOCINT(const std_msgs::msg::Bool::SharedPtr msg);
