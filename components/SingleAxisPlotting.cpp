@@ -54,7 +54,7 @@ void RealTimePlot::Render(const char* title) {
         if (!DataX.Data.empty())             {
             // Plot the data from the public buffers.
             ImPlot::SetNextFillStyle(IMPLOT_AUTO_COL, 0.5f);
-            ImPlot::PlotShaded("Position", &DataX.Data[0].x, &DataX.Data[0].y, DataX.Data.size(), -INFINITY, 0, DataX.Offset, sizeof(ImVec2));
+            ImPlot::PlotLine("Position", &DataX.Data[0].x, &DataX.Data[0].y, DataX.Data.size(), 0, DataX.Offset, sizeof(ImVec2));
         }
         if (!DataY.Data.empty()) {
             ImPlot::SetNextFillStyle(IMPLOT_AUTO_COL, 0.5f);
