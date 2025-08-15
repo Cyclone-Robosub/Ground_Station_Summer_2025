@@ -1,68 +1,82 @@
 #pragma once
-#include <atomic>
 #include <memory>
 #include <mutex>
+#include <shared_mutex>
 #include <vector>
-#include "../crs_common/position/position.hpp"
+#include "include/crs_common/position/position.hpp"
 
+constexpr int numSubsystems = 4;
 
+//! decide on mutable keyword
 
 struct BatteryStruct
 {
-    std::atomic<float> battery_voltage;
-    std::atomic<float> battery_threshold{13.8f};
-    std::atomic<float> SOC;
-    std::atomic<bool> SOCint{false};
-    // std::atomic<StatusCondition> BatteryStatus;
+    float battery_voltage{0.0f};
+
+    float battery_threshold{13.8f};
+
+    float SOC{0.0f};
+
+    bool SOCint{false};
+
+    std::mutex mtx_battery;
 };
+
 struct LocationStruct
 {
-    std::atomic<std::shared_ptr<std::string>> CurrentTask;
-    std::atomic<std::shared_ptr<Position>> CurrentWaypoint;
-    std::atomic<std::shared_ptr<Position>> CurrentPosition;
+    std::shared_mutex mtx_CurrentTask;
+    std::shared_ptr<std::string> CurrentTask;
+
+    std::shared_mutex mtx_CurrentWaypoint;
+    std::shared_ptr<Position> CurrentWaypoint;
+
+    std::shared_mutex mtx_CurrentPosition;
+    std::shared_ptr<Position> CurrentPosition;
 };
+
 struct ThrustStruct
 {
-	std::atomic<std::shared_ptr<std::array<int,8>>> CurrentPWM;
+    std::mutex mtx_CurrentPWM;
+    std::shared_ptr<std::array<int, 8>> CurrentPWM;
 };
-/*
-struct SystemStatuses {
-    //the index determines which ComponentStruct we are talking about.
-    std::mutex SystemStatusmutex;
-    constexpr const int numOfComponents = 3;
-    StatusCondition MainStatus;
-    std::vector<std::string> names;     // Name of the system (e.g., "Manipulator", "Vision")
-    std::vector<StatusCondition> StatusVector{3, StatusCondition::STANDBY};  // "DANGER", "warning", "success", "standby"
-    std::vector<std::string> messages;  // e.g., "system is connected"
-};*/
 
-enum Status{
-    Danger, Warning, Success, Standby
-	
+enum Status
+{
+    Danger,
+    Warning,
+    Success,
+    Standby
 };
+
 std::string StatusToString(Status givenStatus);
+
 struct SystemStatus
 {
     std::string name;    // Name of the system (e.g., "Manipulator", "Vision")
-    Status status;  // "Danger", "warning", "success", "standby"
+    Status status;       // "Danger", "Warning", "Success", "Standby"
     std::string message; // e.g., "system is connected"
+
+    std::mutex mtx_system_status;
 };
+
 struct ManipulationStruct
 {
-    std::atomic<int> ManipulationCode;
+    std::mutex mtx_ManipulationCode;
+    int ManipulationCode{0};
 };
 
 struct StructofComponents
 {
     BatteryStruct BatteryData;
-    // and more sharedptr<etc...>
+
     std::mutex SystemStatusmutex;
-    std::vector<SystemStatus> SystemStatusData = {
+    std::array<SystemStatus, numSubsystems> SystemStatusArray = {
         {"Master Status", Standby, "System is on standby"},
         {"Battery System", Standby, "System is on standby"},
         {"Location System", Standby, "System is on standby"},
         {"Software Kill Switch Status", Standby, "System is on standby"}
     };
+
     LocationStruct LocationData;
     ThrustStruct ThrustData;
 };
