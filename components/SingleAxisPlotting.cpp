@@ -28,27 +28,27 @@ void ScrollingBuffer::Erase() {
 
 // --- RealTimePlot Method Definitions ---
 
-RealTimePlot::RealTimePlot() {
-    // Constructor is empty, but defined here for good practice.
+RealTimePlot::RealTimePlot(const double axis_min, const double axis_max) : AxisMin_(axis_min), AxisMax_(axis_max) {
 }
 
+
 void RealTimePlot::AddPosition(float value) {
-    DataX.AddPoint(CurrentTime, value);
+    DataX.AddPoint(CurrentTime_, value);
 }
 
 void RealTimePlot::AddWaypoint(float value) {
-    DataY.AddPoint(CurrentTime, value);
+    DataY.AddPoint(CurrentTime_, value);
 }
 
 void RealTimePlot::Render(const char* title) {
     // Update the internal time every frame this is drawn.
-    CurrentTime += ImGui::GetIO().DeltaTime;
+    CurrentTime_ += ImGui::GetIO().DeltaTime;
 
     if (ImPlot::BeginPlot(title, ImVec2(-1, 150))) {
         // Setup axes and limits using the internal CurrentTime.
         ImPlot::SetupAxes(nullptr, nullptr, X_AxisFlags, Y_AxisFlags);
-        ImPlot::SetupAxisLimits(ImAxis_X1, CurrentTime - History, CurrentTime, ImGuiCond_Always);
-        ImPlot::SetupAxisLimits(ImAxis_Y1, 0, 1);
+        ImPlot::SetupAxisLimits(ImAxis_X1, CurrentTime_ - History, CurrentTime_, ImGuiCond_Always);
+        ImPlot::SetupAxisLimits(ImAxis_Y1, AxisMin_, AxisMax_);
 
         // Ensure there's data to plot to avoid crashes.
         if (!DataX.Data.empty())             {
