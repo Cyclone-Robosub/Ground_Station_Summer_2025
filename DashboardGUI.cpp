@@ -421,6 +421,33 @@ int DashboardGUI::Startup()
 
         RenderConfigurationPanel(io, show_demo_window, show_demo_plots, show_demo_3dplot, dark_mode);
 
+        // PID Input
+        static GenericInputWidget widget("My Custom Input Widget");
+
+        // Initialize with some default fields (only once)
+        static bool initialized = false;
+        if (!initialized)
+        {
+            widget.AddField("Temperature (°C)", InputFilters::Float);
+            widget.AddField("Count", InputFilters::Integer);
+            widget.AddField("Name", InputFilters::Alphanumeric);
+            initialized = true;
+        }
+
+        // Render the widget
+        widget.Render();
+
+        // Example of accessing values
+        if (ImGui::Begin("Value Monitor"))
+        {
+            ImGui::Text("Monitoring %zu fields:", widget.GetFieldCount());
+            for (size_t i = 0; i < widget.GetFieldCount(); ++i)
+            {
+                ImGui::Text("Field %zu: '%s'", i, widget.GetFieldValue(i).c_str());
+            }
+        }
+        ImGui::End();
+
         // Rendering
         ImGui::Render();
         int display_w, display_h;
