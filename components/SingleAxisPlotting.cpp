@@ -32,11 +32,11 @@ RealTimePlot::RealTimePlot() {
     // Constructor is empty, but defined here for good practice.
 }
 
-void RealTimePlot::AddPointX(float value) {
+void RealTimePlot::AddPosition(float value) {
     DataX.AddPoint(CurrentTime, value);
 }
 
-void RealTimePlot::AddPointY(float value) {
+void RealTimePlot::AddWaypoint(float value) {
     DataY.AddPoint(CurrentTime, value);
 }
 
@@ -54,8 +54,8 @@ void RealTimePlot::Render(const char* title) {
         if (!DataX.Data.empty() && !DataY.Data.empty()) {
             // Plot the data from the public buffers.
             ImPlot::SetNextFillStyle(IMPLOT_AUTO_COL, 0.5f);
-            ImPlot::PlotShaded("Mouse X", &DataX.Data[0].x, &DataX.Data[0].y, DataX.Data.size(), -INFINITY, 0, DataX.Offset, sizeof(ImVec2));
-            ImPlot::PlotLine("Mouse Y", &DataY.Data[0].x, &DataY.Data[0].y, DataY.Data.size(), 0, DataY.Offset, sizeof(ImVec2));
+            ImPlot::PlotShaded("Position", &DataX.Data[0].x, &DataX.Data[0].y, DataX.Data.size(), -INFINITY, 0, DataX.Offset, sizeof(ImVec2));
+            ImPlot::PlotLine("Waypoints", &DataY.Data[0].x, &DataY.Data[0].y, DataY.Data.size(), 0, DataY.Offset, sizeof(ImVec2));
         }
         
         ImPlot::EndPlot();

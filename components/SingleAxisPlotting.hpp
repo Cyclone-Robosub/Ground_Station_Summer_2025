@@ -37,7 +37,7 @@ public:
     RealTimePlot();
 
     // Method declarations
-    void AddPointX(float value);
-    void AddPointY(float value);
+    void AddPosition(float value);
+    void AddWaypoint(float value);
     void Render(const char* title);
 };
