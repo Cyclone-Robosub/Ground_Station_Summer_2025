@@ -309,9 +309,9 @@ int DashboardGUI::Startup()
 
         ImVec2 mouse = ImGui::GetMousePos();
 
-        static RealTimePlot xPlot;
-        static RealTimePlot yPlot;
-        static RealTimePlot zPlot;
+        static RealTimePlot xPlot(0, 5);
+        static RealTimePlot yPlot(0, 5);
+        static RealTimePlot zPlot(0, 2);
         static RealTimePlot rollPlot(-M_PI, M_PI);
         static RealTimePlot pitchPlot(-M_PI, M_PI);
         static RealTimePlot yawPlot(-M_PI, M_PI);
