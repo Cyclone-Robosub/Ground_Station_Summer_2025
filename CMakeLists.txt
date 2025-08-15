@@ -87,6 +87,7 @@ add_executable(DashboardExecutable
     components/ConfigurationPanel.cpp
     components/MultiAxisPlotting.cpp
     components/SingleAxisPlotting.cpp
+    components/Inputbox.cpp
     StructComponents.cpp
     include/crs_common/position/position.cpp
 )
