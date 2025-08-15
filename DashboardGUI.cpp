@@ -31,7 +31,7 @@
 #include "../libs/emscripten/emscripten_mainloop_stub.h"
 #endif
 
-static void glfw_error_callback(int error, const char* description)
+static void glfw_error_callback(int error, const char *description)
 {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
@@ -46,35 +46,35 @@ int DashboardGUI::Startup()
     // Decide GL+GLSL versions
 #if defined(IMGUI_IMPL_OPENGL_ES2)
     // GL ES 2.0 + GLSL 100 (WebGL 1.0)
-    const char* glsl_version = "#version 100";
+    const char *glsl_version = "#version 100";
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
     glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
 #elif defined(IMGUI_IMPL_OPENGL_ES3)
     // GL ES 3.0 + GLSL 300 es (WebGL 2.0)
-    const char* glsl_version = "#version 300 es";
+    const char *glsl_version = "#version 300 es";
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
     glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
 #elif defined(__APPLE__)
     // GL 3.2 + GLSL 150
-    const char* glsl_version = "#version 150";
+    const char *glsl_version = "#version 150";
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // Required on Mac
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // 3.2+ only
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);           // Required on Mac
 #else
     // GL 3.0 + GLSL 130
-    const char* glsl_version = "#version 130";
+    const char *glsl_version = "#version 130";
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-    //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
-    //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
+    // glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
+    // glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
 #endif
 
     // Create window with graphics context
     float main_scale = ImGui_ImplGlfw_GetContentScaleForMonitor(glfwGetPrimaryMonitor()); // Valid on GLFW 3.3+ only
-    GLFWwindow* window = glfwCreateWindow((int)(1280 * main_scale), (int)(800 * main_scale), "Dear ImGui GLFW+OpenGL3 example", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow((int)(1280 * main_scale), (int)(800 * main_scale), "Dear ImGui GLFW+OpenGL3 example", nullptr, nullptr);
     if (window == nullptr)
         return 1;
     glfwMakeContextCurrent(window);
@@ -85,18 +85,19 @@ int DashboardGUI::Startup()
     ImGui::CreateContext();
     ImPlot::CreateContext();
     ImPlot3D::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    ImGuiIO &io = ImGui::GetIO();
+    (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
 
     // Setup Dear ImGui style
     // ImGui::StyleColorsDark();
     ImGui::StyleColorsLight();
 
     // Setup scaling
-    ImGuiStyle& style = ImGui::GetStyle();
-    style.ScaleAllSizes(main_scale);        // Bake a fixed style scale. (until we have a solution for dynamic style scaling, changing this requires resetting Style + calling this again)
-    style.FontScaleDpi = main_scale;        // Set initial font scale. (using io.ConfigDpiScaleFonts=true makes this unnecessary. We leave both here for documentation purpose)
+    ImGuiStyle &style = ImGui::GetStyle();
+    style.ScaleAllSizes(main_scale); // Bake a fixed style scale. (until we have a solution for dynamic style scaling, changing this requires resetting Style + calling this again)
+    style.FontScaleDpi = main_scale; // Set initial font scale. (using io.ConfigDpiScaleFonts=true makes this unnecessary. We leave both here for documentation purpose)
 
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -113,14 +114,14 @@ int DashboardGUI::Startup()
     // - Read 'docs/FONTS.md' for more instructions and details.
     // - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
     // - Our Emscripten build process allows embedding fonts to be accessible at runtime from the "fonts/" folder. See Makefile.emscripten for details.
-    //style.FontSizeBase = 20.0f;
-    //io.Fonts->AddFontDefault();
-    //io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf");
-    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf");
-    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf");
-    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf");
-    //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf");
-    //IM_ASSERT(font != nullptr);
+    // style.FontSizeBase = 20.0f;
+    // io.Fonts->AddFontDefault();
+    // io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf");
+    // io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf");
+    // io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf");
+    // io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf");
+    // ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf");
+    // IM_ASSERT(font != nullptr);
 
     // Our state
     bool show_demo_window = false;
@@ -152,216 +153,211 @@ int DashboardGUI::Startup()
             ImGui_ImplGlfw_Sleep(10);
             continue;
         }
-        
+
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-
-
-
-
-
         static MessageLogger generalLogger;
-        
+
         // Dynamic test messages
         static std::vector<std::string> manipulation_messages = {
-            "Manipulator initialized" ,
+            "Manipulator initialized",
             "Manipulator ready",
             "Manipulator error: joint overload",
-            "Manipulator recovered"
-        };
+            "Manipulator recovered"};
         static std::vector<std::string> vision_messages = {
             "Vision system online",
             "Vision system detected object",
             "Vision system lost tracking",
-            "Vision system reacquired target"
-        };
+            "Vision system reacquired target"};
         static size_t manip_idx = 0;
         static size_t vision_idx = 0;
         static auto last_update = std::chrono::steady_clock::now();
-        
+
         auto now = std::chrono::steady_clock::now();
-       // static int mainindex = 0;
-        if (std::chrono::duration_cast<std::chrono::seconds>(now - last_update).count() >= 2) {
+        // static int mainindex = 0;
+        if (std::chrono::duration_cast<std::chrono::seconds>(now - last_update).count() >= 2)
+        {
             generalLogger.AddSystemMessage("Manipulation", manipulation_messages[manip_idx]);
-          //  mainindex++;
+            //  mainindex++;
             generalLogger.AddSystemMessage("Vision", vision_messages[vision_idx]);
             manip_idx = (manip_idx + 1) % manipulation_messages.size();
             vision_idx = (vision_idx + 1) % vision_messages.size();
             last_update = now;
         }
 
-        
         generalLogger.Render();
-        
 
-
-
-        
         // Example date for 3D plotting
         static LimitedTrajectory robot_waypoint("Desired Waypoint", 1000);
         float waypoint_coordinates[3];
-	std::shared_ptr<Position> Destination = ComponentStructPointer->LocationData.CurrentWaypoint.load(std::memory_order_acquire); 
-	std::shared_ptr<Position> givenPosition = ComponentStructPointer->LocationData.CurrentPosition.load(std::memory_order_acquire);
+        std::shared_ptr<Position> Destination = ComponentStructPointer->LocationData.CurrentWaypoint.load(std::memory_order_acquire);
+        std::shared_ptr<Position> givenPosition = ComponentStructPointer->LocationData.CurrentPosition.load(std::memory_order_acquire);
 
-	if(Destination != nullptr){
-        waypoint_coordinates[0] = Destination->get_x();
-        waypoint_coordinates[1] = Destination->get_y();
-        waypoint_coordinates[2] = Destination->get_z();
-        robot_waypoint.addPoint(waypoint_coordinates); 
-	}
+        if (Destination != nullptr)
+        {
+            waypoint_coordinates[0] = Destination->get_x();
+            waypoint_coordinates[1] = Destination->get_y();
+            waypoint_coordinates[2] = Destination->get_z();
+            robot_waypoint.addPoint(waypoint_coordinates);
+        }
         static LimitedTrajectory robot_position("Current Position", 1000);
         float position_coordinates[3];
-	if(givenPosition != nullptr){
-        position_coordinates[0] = givenPosition->get_x();
-        position_coordinates[1] = givenPosition->get_y();
-        position_coordinates[2] = givenPosition->get_z();
-        robot_position.addPoint(position_coordinates); 
-	}
+        if (givenPosition != nullptr)
+        {
+            position_coordinates[0] = givenPosition->get_x();
+            position_coordinates[1] = givenPosition->get_y();
+            position_coordinates[2] = givenPosition->get_z();
+            robot_position.addPoint(position_coordinates);
+        }
         plotLines(robot_position, robot_waypoint);
 
-        
-        
-        
-        
-        
-        
-        
-//PWM Logging
-    static MessageLogger robotController("Robot Controller"); 
-		
-	std::stringstream PWMmessage;
+        // PWM Logging
+        static MessageLogger robotController("Robot Controller");
+
+        std::stringstream PWMmessage;
         static bool is_initialized = false;
-	if(!is_initialized){
-	if(ComponentStructPointer->ThrustData.CurrentPWM.load(std::memory_order_acquire) == nullptr){
-		is_initialized = false;
-	}else{
-            robotController.AddSystemMessage("PWM", "PWM controller initialized");
-		is_initialized = true;
-	}}
-	else{
-		std::shared_ptr<std::array<int,8>> givenPWM = ComponentStructPointer->ThrustData.CurrentPWM.load(std::memory_order_acquire);if(givenPWM != nullptr){	
-		PWMmessage << "PWM received: [" << (*givenPWM)[0] << ", " << (*givenPWM)[1] <<", " <<  (*givenPWM)[2] << ", " << (*givenPWM)[3] << ", " << (*givenPWM)[4] << ", " << (*givenPWM)[5] << ", " << (*givenPWM)[6] << ", " << (*givenPWM)[7] << "]";
+        if (!is_initialized)
+        {
+            if (ComponentStructPointer->ThrustData.CurrentPWM.load(std::memory_order_acquire) == nullptr)
+            {
+                is_initialized = false;
+            }
+            else
+            {
+                robotController.AddSystemMessage("PWM", "PWM controller initialized");
+                is_initialized = true;
+            }
+        }
+        else
+        {
+            std::shared_ptr<std::array<int, 8>> givenPWM = ComponentStructPointer->ThrustData.CurrentPWM.load(std::memory_order_acquire);
+            if (givenPWM != nullptr)
+            {
+                PWMmessage << "PWM received: [" << (*givenPWM)[0] << ", " << (*givenPWM)[1] << ", " << (*givenPWM)[2] << ", " << (*givenPWM)[3] << ", " << (*givenPWM)[4] << ", " << (*givenPWM)[5] << ", " << (*givenPWM)[6] << ", " << (*givenPWM)[7] << "]";
 
-		std::string PWM_string = PWMmessage.str();
-		robotController.AddSystemMessage("PWM", PWM_string);}
-	}
+                std::string PWM_string = PWMmessage.str();
+                robotController.AddSystemMessage("PWM", PWM_string);
+            }
+        }
 
-
-
-
-
-//Position Logging
-	std::stringstream Positionmessage;
-	static bool is_initializedPosition = false;
-	if(!is_initializedPosition){
-	if(ComponentStructPointer->LocationData.CurrentPosition.load(std::memory_order_acquire) == nullptr){
-		is_initializedPosition = false;
-	}else{
-		robotController.AddSystemMessage("Position", "Current Position initialized");
-		is_initializedPosition = true;
-	}}
-	else{	
-	givenPosition = ComponentStructPointer->LocationData.CurrentPosition.load(std::memory_order_acquire);
-        position_coordinates[0] = givenPosition->get_x();
-        position_coordinates[1] = givenPosition->get_y();
-        position_coordinates[2] = givenPosition->get_z();
-        Positionmessage << "Position received: ["
-        << std::fixed << std::setprecision(5) << position_coordinates[0] << ", "
-        << std::fixed << std::setprecision(5) << position_coordinates[1] << ", "
-        << std::fixed << std::setprecision(5) << position_coordinates[2] << "]";
-	}
-	robotController.AddSystemMessage("Position", Positionmessage.str());
+        // Position Logging
+        std::stringstream Positionmessage;
+        static bool is_initializedPosition = false;
+        if (!is_initializedPosition)
+        {
+            if (ComponentStructPointer->LocationData.CurrentPosition.load(std::memory_order_acquire) == nullptr)
+            {
+                is_initializedPosition = false;
+            }
+            else
+            {
+                robotController.AddSystemMessage("Position", "Current Position initialized");
+                is_initializedPosition = true;
+            }
+        }
+        else
+        {
+            givenPosition = ComponentStructPointer->LocationData.CurrentPosition.load(std::memory_order_acquire);
+            position_coordinates[0] = givenPosition->get_x();
+            position_coordinates[1] = givenPosition->get_y();
+            position_coordinates[2] = givenPosition->get_z();
+            Positionmessage << "Position received: ["
+                            << std::fixed << std::setprecision(5) << position_coordinates[0] << ", "
+                            << std::fixed << std::setprecision(5) << position_coordinates[1] << ", "
+                            << std::fixed << std::setprecision(5) << position_coordinates[2] << "]";
+        }
+        robotController.AddSystemMessage("Position", Positionmessage.str());
         // robotController.AddSystemMessage("Waypoint", "Waypoint received: [1.0, 2.0, 3.0]");
-	std::stringstream Waypointmessage;
-	static bool is_initializedWaypoint = false;
-	if(!is_initializedWaypoint){
-	if(ComponentStructPointer->LocationData.CurrentWaypoint.load(std::memory_order_acquire) == nullptr){
-		is_initializedWaypoint = false;
-	}else{
-		is_initializedWaypoint = true;
-		robotController.AddSystemMessage("DesiredWaypoint", "Desired Waypoint initialized");
-	}}
-	else{	
-	Destination  = ComponentStructPointer->LocationData.CurrentWaypoint.load(std::memory_order_acquire);
-        waypoint_coordinates[0] = Destination->get_x();
-        waypoint_coordinates[1] = Destination->get_y();
-        waypoint_coordinates[2] = Destination->get_z();
-        Waypointmessage << "Waypoint received: ["
-        << std::fixed << std::setprecision(5) << waypoint_coordinates[0] << ", "
-        << std::fixed << std::setprecision(5) << waypoint_coordinates[1] << ", "
-        << std::fixed << std::setprecision(5) << waypoint_coordinates[2] << "]";
-	robotController.AddSystemMessage("DesiredWaypoint", Waypointmessage.str());
-	}
+        std::stringstream Waypointmessage;
+        static bool is_initializedWaypoint = false;
+        if (!is_initializedWaypoint)
+        {
+            if (ComponentStructPointer->LocationData.CurrentWaypoint.load(std::memory_order_acquire) == nullptr)
+            {
+                is_initializedWaypoint = false;
+            }
+            else
+            {
+                is_initializedWaypoint = true;
+                robotController.AddSystemMessage("DesiredWaypoint", "Desired Waypoint initialized");
+            }
+        }
+        else
+        {
+            Destination = ComponentStructPointer->LocationData.CurrentWaypoint.load(std::memory_order_acquire);
+            waypoint_coordinates[0] = Destination->get_x();
+            waypoint_coordinates[1] = Destination->get_y();
+            waypoint_coordinates[2] = Destination->get_z();
+            Waypointmessage << "Waypoint received: ["
+                            << std::fixed << std::setprecision(5) << waypoint_coordinates[0] << ", "
+                            << std::fixed << std::setprecision(5) << waypoint_coordinates[1] << ", "
+                            << std::fixed << std::setprecision(5) << waypoint_coordinates[2] << "]";
+            robotController.AddSystemMessage("DesiredWaypoint", Waypointmessage.str());
+        }
 
-    robotController.Render();
+        robotController.Render();
 
+        if (Destination != nullptr && givenPosition != nullptr)
+        {
+            float test_position = ComponentStructPointer->LocationData.CurrentPosition.load(std::memory_order::acquire)->get_x();
+            float test_waypoint = ComponentStructPointer->LocationData.CurrentWaypoint.load(std::memory_order::acquire)->get_x();
+        }
 
+        ImVec2 mouse = ImGui::GetMousePos();
 
+        static RealTimePlot xPlot;
+        static RealTimePlot yPlot;
+        static RealTimePlot zPlot;
+        static RealTimePlot rollPlot;
+        static RealTimePlot pitchPlot;
+        static RealTimePlot yawPlot;
 
+        Destination = ComponentStructPointer->LocationData.CurrentWaypoint.load(std::memory_order_acquire);
+        givenPosition = ComponentStructPointer->LocationData.CurrentPosition.load(std::memory_order_acquire);
+        // // Call the methods to add points.
+        // Check if givenPosition is valid
+        if (givenPosition != nullptr)
+        {
+            xPlot.AddPosition(givenPosition->get_x());
+            yPlot.AddPosition(givenPosition->get_y());
+            zPlot.AddPosition(givenPosition->get_z());
+            rollPlot.AddPosition(givenPosition->get_roll());
+            pitchPlot.AddPosition(givenPosition->get_pitch());
+            yawPlot.AddPosition(givenPosition->get_yaw());
+        }
 
-	if(Destination != nullptr && givenPosition != nullptr){
-        float test_position = ComponentStructPointer->LocationData.CurrentPosition.load(std::memory_order::acquire)->get_x();
-        float test_waypoint = ComponentStructPointer->LocationData.CurrentWaypoint.load(std::memory_order::acquire)->get_x();
+        // Check if Destination is valid
+        if (Destination != nullptr)
+        {
+            xPlot.AddWaypoint(Destination->get_x());
+            yPlot.AddWaypoint(Destination->get_y());
+            zPlot.AddWaypoint(Destination->get_z());
+            rollPlot.AddWaypoint(Destination->get_roll());
+            pitchPlot.AddWaypoint(Destination->get_pitch());
+            yawPlot.AddWaypoint(Destination->get_yaw());
+        }
 
-	}
-    
-    
-    ImVec2 mouse = ImGui::GetMousePos();
+        // Control plot properties externally with an ImGui slider.
+        // ImGui::SliderFloat("History", &myPlot.History, 1, 30, "%.1f s");
 
-    static RealTimePlot xPlot;
-    static RealTimePlot yPlot;
-    static RealTimePlot zPlot;
-    static RealTimePlot rollPlot;
-    static RealTimePlot pitchPlot;
-    static RealTimePlot yawPlot;
+        // Call the Draw method to render the plot.
+        ImGui::Begin("XYZ Plot");
+        xPlot.Render("X-Axis");
+        yPlot.Render("Y-Axis");
+        zPlot.Render("Z-Axis");
+        ImGui::End();
 
-    // // Call the methods to add points.
-    xPlot.AddPosition(mouse.x * 0.0005f);
-    xPlot.AddWaypoint(mouse.y * 0.0005f);
-    
-    // // Call the methods to add points.
-    yPlot.AddPosition(mouse.x * 0.0005f);
-    yPlot.AddWaypoint(mouse.y * 0.0005f);
-
-    // // Call the methods to add points.
-    zPlot.AddPosition(mouse.x * 0.0005f);
-    zPlot.AddWaypoint(mouse.y * 0.0005f);
-
-    // // Call the methods to add points.
-    rollPlot.AddPosition(mouse.x * 0.0005f);
-    rollPlot.AddWaypoint(mouse.y * 0.0005f);
-
-    // // Call the methods to add points.
-    pitchPlot.AddPosition(mouse.x * 0.0005f);
-    pitchPlot.AddWaypoint(mouse.y * 0.0005f);
-
-    // // Call the methods to add points.
-    yawPlot.AddPosition(mouse.x * 0.0005f);
-    yawPlot.AddWaypoint(mouse.y * 0.0005f);
-
-    // Control plot properties externally with an ImGui slider.
-    // ImGui::SliderFloat("History", &myPlot.History, 1, 30, "%.1f s");
-
-    // Call the Draw method to render the plot.
-    ImGui::Begin("XYZ Plot");
-    xPlot.Render("X-Axis");
-    yPlot.Render("Y-Axis");
-    zPlot.Render("Z-Axis");
-    ImGui::End();
-
-    ImGui::Begin("Roll-Pitch-Yaw Plot");
-    rollPlot.Render("Roll");
-    pitchPlot.Render("Pitch");
-    yawPlot.Render("Yaw");
-    ImGui::End();
-
-
-
+        ImGui::Begin("Roll-Pitch-Yaw Plot");
+        rollPlot.Render("Roll");
+        pitchPlot.Render("Pitch");
+        yawPlot.Render("Yaw");
+        ImGui::End();
 
         // Sample data for status indicators
+        /*
         static std::vector<std::string> master_statuses = {
             "DANGER", "warning", "success", "standby"
         };
@@ -386,20 +382,21 @@ int DashboardGUI::Startup()
                 {"Robot Operations", "standby", "System 2 offline"},
                 {"Hardwar Status", "success", "System 3 is connected"}
             }
-        };
+        };*/
 
         static size_t status_idx = 0;
         static auto last_status_update = std::chrono::steady_clock::now();
 
         auto now_status = std::chrono::steady_clock::now();
-        if (std::chrono::duration_cast<std::chrono::seconds>(now_status - last_status_update).count() >= 2) {
+        if (std::chrono::duration_cast<std::chrono::seconds>(now_status - last_status_update).count() >= 2)
+        {
             status_idx = (status_idx + 1) % 4;
             last_status_update = now_status;
         }
         std::unique_lock<std::mutex> lk(ComponentStructPointer->SystemStatusmutex);
-        std::string master_status = ComponentStructPointer->SystemStatusData[0].status;
-       // std::vector<SystemStatus> system_statuses = system_statuses_set[status_idx];
-        
+        Status master_status = ComponentStructPointer->SystemStatusData[0].status;
+        // std::vector<SystemStatus> system_statuses = system_statuses_set[status_idx];
+
         RenderStatusIndicators(master_status, ComponentStructPointer->SystemStatusData);
         lk.unlock();
         // Battery voltage test data
@@ -409,7 +406,8 @@ int DashboardGUI::Startup()
 
         // For battery voltage
         auto now_battery = std::chrono::steady_clock::now();
-        if (std::chrono::duration_cast<std::chrono::milliseconds>(now_battery - last_battery_update).count() >= 50) {
+        if (std::chrono::duration_cast<std::chrono::milliseconds>(now_battery - last_battery_update).count() >= 50)
+        {
             battery_idx = (battery_idx + 1) % battery_voltages.size();
             last_battery_update = now_battery;
         }
@@ -420,7 +418,7 @@ int DashboardGUI::Startup()
         RenderBatteryMonitor(ComponentStructPointer->BatteryData);
 
         // DemoLinePlots();
-        
+
         RenderConfigurationPanel(io, show_demo_window, show_demo_plots, show_demo_3dplot, dark_mode);
 
         // Rendering

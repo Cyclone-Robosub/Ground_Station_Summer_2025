@@ -87,7 +87,7 @@ add_executable(DashboardExecutable
     components/ConfigurationPanel.cpp
     components/MultiAxisPlotting.cpp
     components/SingleAxisPlotting.cpp
-    StructComponents.hpp
+    StructComponents.cpp
     ../crs_common/position/position.cpp
 )
 # Use ament_target_dependencies to handle ROS 2 dependencies correctly

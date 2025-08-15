@@ -29,6 +29,7 @@ private:
   rclcpp::CallbackGroup::SharedPtr callbackBattery;
   rclcpp::CallbackGroup::SharedPtr callbackExecutive;
   rclcpp::CallbackGroup::SharedPtr callbackThruster;
+  rclcpp::CallbackGroup::SharedPtr callbackKillSwitch;
   rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr SOCsub;
   rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr SOCINTsub;
   rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr Voltsub;
@@ -36,6 +37,7 @@ private:
   rclcpp::Subscription<std_msgs::msg::Float32MultiArray>::SharedPtr PositionSub;
 
   rclcpp::Subscription<std_msgs::msg::Int32MultiArray>::SharedPtr PWMSub;
+  rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr SoftwareKSSub;
 
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr CurrentTaskSub;
   rclcpp::Subscription<std_msgs::msg::Int64>::SharedPtr ManipulationSub;
@@ -48,6 +50,9 @@ private:
   void getVolt(const std_msgs::msg::Float64::SharedPtr msg);
   void getMainipulation(const std_msgs::msg::Int64::SharedPtr msg);
   void getPWM(const std_msgs::msg::Int32MultiArray::SharedPtr msg);
+  void getSoftwareKS(const std_msgs::msg::Bool::SharedPtr msg);
   bool isRobotRunning;
   std::atomic<bool> isControllerShutdown{false};
+  bool isSoftwareKS;
+  bool isHardwareKS;
 };

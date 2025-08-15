@@ -5,6 +5,9 @@ void DashboardController::SetupROS()
     callbackBattery = this->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
     callbackExecutive = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
     callbackThruster = this->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
+    callbackKillSwitch = this->create_callback_group
+    (rclcpp::CallbackGroupType::MutuallyExclusive);
+
     auto VoltageOptions = rclcpp::SubscriptionOptions();
     VoltageOptions.callback_group = callbackBattery;
 
@@ -25,6 +28,9 @@ void DashboardController::SetupROS()
     auto PWMOptions = rclcpp::SubscriptionOptions();
     PWMOptions.callback_group = callbackThruster;
 
+    auto SoftwareKSOptions = rclcpp::SubscriptionOptions();
+    SoftwareKSOptions.callback_group = callbackKillSwitch;
+
    Voltsub = this->create_subscription<std_msgs::msg::Float64>("voltageReadingTopic", 10, std::bind(&DashboardController::getVolt, this, std::placeholders::_1), VoltOptions);
     SOCsub = this->create_subscription<std_msgs::msg::Float64>("SOCTopic", 10, std::bind(&DashboardController::getSOC, this, std::placeholders::_1), CurrentOptions);
     SOCINTsub = this->create_subscription<std_msgs::msg::Bool>("SOCIntTopic", 10, std::bind(&DashboardController::getSOCINT, this, std::placeholders::_1), CurrentINTOptions);
@@ -34,6 +40,10 @@ void DashboardController::SetupROS()
      this->create_subscription<std_msgs::msg::Float32MultiArray>("position_topic", 10, std::bind(&DashboardController::getPosition, this, std::placeholders::_1), PositionOptions);
      PWMSub = 
  	this->create_subscription<std_msgs::msg::Int32MultiArray>("sent_pwm_topic", 10, std::bind(&DashboardController::getPWM, this, std::placeholders::_1),PWMOptions);
+
+    SoftwareKSSub = 
+    this->create_subscription<std_msgs::msg::Bool>("killstatus_topic", 10, 
+    std::bind(&DashboardController::getSoftwareKS, this, std::placeholders::_1), SoftwareKSOptions);
     // Vision
 }
 void DashboardController::Controller()
@@ -48,15 +58,15 @@ void DashboardController::Controller()
             // std::fill(ComponentStruct->SystemStatusData.begin(), ComponentStruct->SystemStatusData.end(), "success");
             for (auto i : ComponentStruct->SystemStatusData)
             {
-                i.status = "success";
+                i.status = Success;
             }
         }
         std::lock_guard<std::mutex>(ComponentStruct->SystemStatusmutex);
         for (auto i : ComponentStruct->SystemStatusData)
         {
-            if (i.status == "danger")
+            if (i.status == Danger)
             {
-                ComponentStruct->SystemStatusData[0].status = "danger";
+                ComponentStruct->SystemStatusData[0].status = Danger;
                 ComponentStruct->SystemStatusData[0].message = i.message;
                 break;
             }
@@ -67,9 +77,9 @@ void DashboardController::Controller()
             std::lock_guard<std::mutex>(ComponentStruct->SystemStatusmutex);
             for (auto i : ComponentStruct->SystemStatusData)
             {
-                if (i.status == "danger")
+                if (i.status == Danger)
                 {
-                    ComponentStruct->SystemStatusData[0].status = "danger";
+                    ComponentStruct->SystemStatusData[0].status = Danger;
                     ComponentStruct->SystemStatusData[0].message = i.message;
                     break;
                 }
@@ -78,7 +88,7 @@ void DashboardController::Controller()
         std::lock_guard<std::mutex>(ComponentStruct->SystemStatusmutex);
         for (auto i : ComponentStruct->SystemStatusData)
         {
-            i.status = "standby";
+            i.status = Standby;
         }
     }
 
@@ -93,7 +103,7 @@ void DashboardController::getSOC(const std_msgs::msg::Float64::SharedPtr msg)
 void DashboardController::getSOCINT(const std_msgs::msg::Bool::SharedPtr msg)
 {
     std::lock_guard<std::mutex>(ComponentStruct->SystemStatusmutex);
-    ComponentStruct->SystemStatusData[1].status = "danger";
+    ComponentStruct->SystemStatusData[1].status = Danger;
     ComponentStruct->SystemStatusData[1].message = "SOC IS LOW -> SOC INT IS TRIGGERED";
     ComponentStruct->BatteryData.SOCint.store(msg->data, std::memory_order_release);
 }
@@ -121,6 +131,18 @@ void DashboardController::getPWM(const std_msgs::msg::Int32MultiArray::SharedPtr
 	std::array<int, 8> arr;
 	std::copy_n(msg->data.begin(),  8, arr.begin());
 	ComponentStruct->ThrustData.CurrentPWM.store(std::make_shared<std::array<int,8>>(arr), std::memory_order_release);
+}
+void DashboardController::getSoftwareKS(const std_msgs::msg::Bool::SharedPtr msg){
+    isSoftwareKS = msg->data;
+    std::lock_guard<std::mutex>(ComponentStruct->SystemStatusmutex);
+    if(isSoftwareKS) {
+    ComponentStruct->SystemStatusData[3].status = Danger;
+    ComponentStruct->SystemStatusData[3].message = "Software Kill Switch Triggered.";
+    ComponentStruct->SystemStatusData[0].message = "Robot is currently software-killed.";
+    }else{
+    ComponentStruct->SystemStatusData[3].status = Success;
+    ComponentStruct->SystemStatusData[3].message = "Software Kill Switch NOT Triggered";
+    }
 }
 // getposition
 

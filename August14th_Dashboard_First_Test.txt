@@ -1,0 +1,7 @@
+1. Middle point fixed on the 4d graph 
+2. Error Display
+3. keep Waypoint as long as possible.
+4. Waypoint and Position need to be related and have PWM in the bottom.
+5. AreThereYet() signal in the graph
+6. Brainstorm ways just in case.
+7. Kill Switch stuff startup crontab.
