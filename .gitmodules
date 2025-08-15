@@ -10,3 +10,6 @@
 [submodule "imgui"]
 	path = include/imgui
 	url = https://github.com/ocornut/imgui.git
+[submodule "crs_common"]
+	path = include/crs_common
+	url = https://github.com/Cyclone-Robosub/crs_common.git

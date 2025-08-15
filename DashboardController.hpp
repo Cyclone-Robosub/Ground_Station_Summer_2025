@@ -11,7 +11,7 @@
 #include <string>
 #include <atomic>
 #include "StructComponents.hpp"
-#include "../crs_common/position/position.hpp"
+#include "include/crs_common/position/position.hpp"
 /// @todo : multithreadexecutor for multiple subscribers.
 ///         Subscription Options
 ///         
