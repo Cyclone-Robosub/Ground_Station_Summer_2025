@@ -282,10 +282,26 @@ int DashboardGUI::Startup()
         float test_position = ComponentStructPointer->LocationData.CurrentPosition.load(std::memory_order::acquire)->get_x();
         float test_waypoint = ComponentStructPointer->LocationData.CurrentWaypoint.load(std::memory_order::acquire)->get_x();
 	
-        static TrajectoryComparisonPlot position_plot("X-Axis Position", 1000);
-        position_plot.AddCurrentPosition(test_position);
-        position_plot.AddWaypoint(test_waypoint);
-        position_plot.RenderPlot();
+        // static TrajectoryComparisonPlot position_plot("X-Axis Position", 1000);
+        // position_plot.AddCurrentPosition(test_position);
+        // position_plot.AddWaypoint(test_waypoint);
+        // position_plot.RenderPlot();
+
+        //  ImVec2 mouse = ImGui::GetMousePos();
+
+         static RealTimePlot myPlot;
+
+        // // Call the methods to add points.
+        myPlot.AddPointX(test_position);
+        myPlot.AddPointY(test_waypoint);
+
+        // Control plot properties externally with an ImGui slider.
+        // ImGui::SliderFloat("History", &myPlot.History, 1, 30, "%.1f s");
+
+        // Call the Draw method to render the plot.
+        ImGui::Begin("Position Tracking Plot");
+        myPlot.Render("##Scrolling");
+        ImGui::End();
 	}
 
         // Demo3DLinePlots();
@@ -348,7 +364,7 @@ int DashboardGUI::Startup()
         static float battery_threshold = 12.0f; // Example threshold value
         RenderBatteryMonitor(ComponentStructPointer->BatteryData);
 
-        DemoLinePlots();
+        // DemoLinePlots();
         
         RenderConfigurationPanel(io, show_demo_window, show_demo_plots, show_demo_3dplot, dark_mode);
 
