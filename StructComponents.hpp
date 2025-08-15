@@ -74,5 +74,5 @@ struct StructofComponents
     };
     LocationStruct LocationData;
     ThrustStruct ThrustData;
-    Cl_Tool_Struct CLToolData;
+    CL_Tool_Struct CLToolData;
 };

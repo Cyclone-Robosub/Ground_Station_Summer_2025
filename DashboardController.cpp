@@ -47,12 +47,12 @@ void DashboardController::SetupROS()
 
 
     //Publishers
-    X_Axis_Publisher = this->create_subscription<std_msgs::msg::Float32MultiArray>("X_axis_CLTool_Topic", 10); 
-    Y_Axis_Publisher = this->create_subscription<std_msgs::msg::Float32MultiArray>("Y_axis_CLTool_Topic", 10); 
-    Z_Axis_Publisher = this->create_subscription<std_msgs::msg::Float32MultiArray>("Z_axis_CLTool_Topic", 10); 
-    ROLL_Axis_Publisher = this->create_subscription<std_msgs::msg::Float32MultiArray>("roll_axis_CLTool_Topic", 10); 
-    PITCH_Axis_Publisher = this->create_subscription<std_msgs::msg::Float32MultiArray>("pitch_axis_CLTool_Topic", 10); 
-    YAW_Axis_Publisher =  this->create_subscription<std_msgs::msg::Float32MultiArray>("yaw_axis_CLTool_Topic", 10); 
+    X_Axis_Publisher = this->create_publisher<std_msgs::msg::Float32MultiArray>("X_axis_CLTool_Topic", 10); 
+    Y_Axis_Publisher = this->create_publisher<std_msgs::msg::Float32MultiArray>("Y_axis_CLTool_Topic", 10); 
+    Z_Axis_Publisher = this->create_publisher<std_msgs::msg::Float32MultiArray>("Z_axis_CLTool_Topic", 10); 
+    ROLL_Axis_Publisher = this->create_publisher<std_msgs::msg::Float32MultiArray>("roll_axis_CLTool_Topic", 10); 
+    PITCH_Axis_Publisher = this->create_publisher<std_msgs::msg::Float32MultiArray>("pitch_axis_CLTool_Topic", 10); 
+    YAW_Axis_Publisher =  this->create_publisher<std_msgs::msg::Float32MultiArray>("yaw_axis_CLTool_Topic", 10); 
     // Vision
 }
 void DashboardController::Controller()
@@ -60,7 +60,7 @@ void DashboardController::Controller()
     while (!isControllerShutdown.load())
     {
         // Robot not Running, See if Running
-        if (ComponentStruct->LocationData.CurrentTask. != nullptr)
+        if (ComponentStruct->LocationData.CurrentTask.load(std::memory_order_acquire) != nullptr)
         {
             isRobotRunning = true;
             std::lock_guard<std::mutex>(ComponentStruct->SystemStatusmutex);
@@ -94,39 +94,39 @@ void DashboardController::Controller()
         auto msg = std_msgs::msg::Float32MultiArray();
         msg.data.resize(8);
         if(ComponentStruct->CLToolData.CLToolDataMutex.try_lock()){
-        if(ComponentStruct->CLToolData->x_axis_array != nullptr){
+        if(ComponentStruct->CLToolData.x_axis_array != nullptr){
             for(int i = 0; i < 8; i++){
-                msg.data[i] = ComponentStruct->CLToolData->x_axis_array[i];
+                msg.data[i] = ComponentStruct->CLToolData.x_axis_array[i];
             }
             X_Axis_Publisher->publish(msg);
         }
-        if(ComponentStruct->CLToolData->y_axis_array != nullptr){
+        if(ComponentStruct->CLToolData.y_axis_array != nullptr){
             for(int i = 0; i < 8; i++){
-               msg.data[i] = ComponentStruct->CLToolData->y_axis_array[i];
+               msg.data[i] = ComponentStruct->CLToolData.y_axis_array[i];
             }
             Y_Axis_Publisher->publish(msg);
         }
-        if(ComponentStruct->CLToolData->z_axis_array != nullptr){
+        if(ComponentStruct->CLToolData.z_axis_array != nullptr){
             for(int i = 0; i < 8; i++){
-               msg.data[i] = ComponentStruct->CLToolData->z_axis_array[i];
+               msg.data[i] = ComponentStruct->CLToolData.z_axis_array[i];
             }
             Z_Axis_Publisher->publish(msg);
         }
-        if(ComponentStruct->CLToolData->roll_array != nullptr){
+        if(ComponentStruct->CLToolData.roll_array != nullptr){
             for(int i = 0; i < 8; i++){
-               msg.data[i] = ComponentStruct->CLToolData->roll_array[i];
+               msg.data[i] = ComponentStruct->CLToolData.roll_array[i];
             }
             ROLL_Axis_Publisher->publish(msg);
         }
-        if(ComponentStruct->CLToolData->pitch_array != nullptr){
+        if(ComponentStruct->CLToolData.pitch_array != nullptr){
             for(int i = 0; i < 8; i++){
-               msg.data[i] = ComponentStruct->CLToolData->pitch_array[i];
+               msg.data[i] = ComponentStruct->CLToolData.pitch_array[i];
             }
             PITCH_Axis_Publisher->publish(msg);
         }
-        if(ComponentStruct->CLToolData->yaw_array != nullptr){
+        if(ComponentStruct->CLToolData.yaw_array != nullptr){
             for(int i = 0; i < 8; i++){
-               msg.data[i] = ComponentStruct->CLToolData->yaw_array[i];
+               msg.data[i] = ComponentStruct->CLToolData.yaw_array[i];
             }
             YAW_Axis_Publisher->publish(msg);
         }
