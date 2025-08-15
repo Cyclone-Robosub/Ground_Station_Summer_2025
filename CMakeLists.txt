@@ -22,7 +22,7 @@ find_package(Threads REQUIRED)
 # -------------------------------------------------------------------------------------------------
 # Third-Party Dependencies (now in the 'include' subdirectory)
 # -------------------------------------------------------------------------------------------------
-find_package(glfw3 3.3 REQUIRED)
+add_subdirectory(include/glfw)
 find_package(OpenGL REQUIRED)
 
 # --- ImGui Library ---
