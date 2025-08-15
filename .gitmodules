@@ -1,0 +1,9 @@
+[submodule "imgui"]
+	path = include/imgui
+	url = https://github.com/ocornut/imgui.git
+[submodule "implot"]
+	path = include/implot
+	url = https://github.com/epezent/implot.git
+[submodule "implot3d"]
+	path = include/implot3d
+	url = https://github.com/brenocq/implot3d.git
