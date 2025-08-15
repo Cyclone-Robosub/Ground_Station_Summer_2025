@@ -158,6 +158,11 @@ int DashboardGUI::Startup()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+
+
+
+
+
         static MessageLogger generalLogger;
         
         // Dynamic test messages
@@ -191,11 +196,16 @@ int DashboardGUI::Startup()
         
         generalLogger.Render();
         
-        // Example date for plotting
+
+
+
+        
+        // Example date for 3D plotting
         static LimitedTrajectory robot_waypoint("Desired Waypoint", 1000);
         float waypoint_coordinates[3];
 	std::shared_ptr<Position> Destination = ComponentStructPointer->LocationData.CurrentWaypoint.load(std::memory_order_acquire); 
 	std::shared_ptr<Position> givenPosition = ComponentStructPointer->LocationData.CurrentPosition.load(std::memory_order_acquire);
+
 	if(Destination != nullptr){
         waypoint_coordinates[0] = Destination->get_x();
         waypoint_coordinates[1] = Destination->get_y();
@@ -212,10 +222,15 @@ int DashboardGUI::Startup()
 	}
         plotLines(robot_position, robot_waypoint);
 
-        static MessageLogger robotController("Robot Controller"); 
-       
-
+        
+        
+        
+        
+        
+        
+        
 //PWM Logging
+    static MessageLogger robotController("Robot Controller"); 
 		
 	std::stringstream PWMmessage;
         static bool is_initialized = false;
@@ -233,6 +248,11 @@ int DashboardGUI::Startup()
 		std::string PWM_string = PWMmessage.str();
 		robotController.AddSystemMessage("PWM", PWM_string);}
 	}
+
+
+
+
+
 //Position Logging
 	std::stringstream Positionmessage;
 	static bool is_initializedPosition = false;
@@ -276,19 +296,70 @@ int DashboardGUI::Startup()
 	robotController.AddSystemMessage("DesiredWaypoint", Waypointmessage.str());
 	}
 
-	//5. Render all the system messages.
-        robotController.Render();
+    robotController.Render();
+
+
+
+
+
 	if(Destination != nullptr && givenPosition != nullptr){
         float test_position = ComponentStructPointer->LocationData.CurrentPosition.load(std::memory_order::acquire)->get_x();
         float test_waypoint = ComponentStructPointer->LocationData.CurrentWaypoint.load(std::memory_order::acquire)->get_x();
-	
-        static TrajectoryComparisonPlot position_plot("X-Axis Position", 1000);
-        position_plot.AddCurrentPosition(test_position);
-        position_plot.AddWaypoint(test_waypoint);
-        position_plot.RenderPlot();
-	}
 
-        // Demo3DLinePlots();
+	}
+    
+    
+    ImVec2 mouse = ImGui::GetMousePos();
+
+    static RealTimePlot xPlot;
+    static RealTimePlot yPlot;
+    static RealTimePlot zPlot;
+    static RealTimePlot rollPlot;
+    static RealTimePlot pitchPlot;
+    static RealTimePlot yawPlot;
+
+    // // Call the methods to add points.
+    xPlot.AddPosition(mouse.x * 0.0005f);
+    xPlot.AddWaypoint(mouse.y * 0.0005f);
+    
+    // // Call the methods to add points.
+    yPlot.AddPosition(mouse.x * 0.0005f);
+    yPlot.AddWaypoint(mouse.y * 0.0005f);
+
+    // // Call the methods to add points.
+    zPlot.AddPosition(mouse.x * 0.0005f);
+    zPlot.AddWaypoint(mouse.y * 0.0005f);
+
+    // // Call the methods to add points.
+    rollPlot.AddPosition(mouse.x * 0.0005f);
+    rollPlot.AddWaypoint(mouse.y * 0.0005f);
+
+    // // Call the methods to add points.
+    pitchPlot.AddPosition(mouse.x * 0.0005f);
+    pitchPlot.AddWaypoint(mouse.y * 0.0005f);
+
+    // // Call the methods to add points.
+    yawPlot.AddPosition(mouse.x * 0.0005f);
+    yawPlot.AddWaypoint(mouse.y * 0.0005f);
+
+    // Control plot properties externally with an ImGui slider.
+    // ImGui::SliderFloat("History", &myPlot.History, 1, 30, "%.1f s");
+
+    // Call the Draw method to render the plot.
+    ImGui::Begin("XYZ Plot");
+    xPlot.Render("X-Axis");
+    yPlot.Render("Y-Axis");
+    zPlot.Render("Z-Axis");
+    ImGui::End();
+
+    ImGui::Begin("Roll-Pitch-Yaw Plot");
+    rollPlot.Render("Roll");
+    pitchPlot.Render("Pitch");
+    yawPlot.Render("Yaw");
+    ImGui::End();
+
+
+
 
         // Sample data for status indicators
         /*
@@ -349,7 +420,7 @@ int DashboardGUI::Startup()
         static float battery_threshold = 12.0f; // Example threshold value
         RenderBatteryMonitor(ComponentStructPointer->BatteryData);
 
-        DemoLinePlots();
+        // DemoLinePlots();
         
         RenderConfigurationPanel(io, show_demo_window, show_demo_plots, show_demo_3dplot, dark_mode);
 

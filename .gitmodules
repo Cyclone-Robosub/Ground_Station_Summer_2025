@@ -9,3 +9,6 @@
 [submodule "implot3d"]
 	path = include/implot3d
 	url = https://github.com/brenocq/implot3d.git
+[submodule "include/glfw"]
+	path = include/glfw
+	url = https://github.com/glfw/glfw.git

@@ -6,7 +6,7 @@ source /opt/ros/jazzy/setup.bash
 ```
 Build the project
 ```bash
-colon build
+colcon build
 ```
 Run the excutable
 ```bash

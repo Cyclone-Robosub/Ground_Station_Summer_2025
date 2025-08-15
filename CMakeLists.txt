@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(dashboard_project)
+project(cyclone_dashboard)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -22,7 +22,7 @@ find_package(Threads REQUIRED)
 # -------------------------------------------------------------------------------------------------
 # Third-Party Dependencies (now in the 'include' subdirectory)
 # -------------------------------------------------------------------------------------------------
-find_package(glfw3 3.3 REQUIRED)
+add_subdirectory(include/glfw)
 find_package(OpenGL REQUIRED)
 
 # --- ImGui Library ---
