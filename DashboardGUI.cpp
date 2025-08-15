@@ -318,29 +318,33 @@ int DashboardGUI::Startup()
     static RealTimePlot pitchPlot;
     static RealTimePlot yawPlot;
 
+	 Destination = ComponentStructPointer->LocationData.CurrentWaypoint.load(std::memory_order_acquire); 
+	 givenPosition = ComponentStructPointer->LocationData.CurrentPosition.load(std::memory_order_acquire);
     // // Call the methods to add points.
-    xPlot.AddPosition(mouse.x * 0.0005f);
-    xPlot.AddWaypoint(mouse.y * 0.0005f);
-    
+    if(Destination != nullptr && givenPosition != nullptr){
+    xPlot.AddPosition(givenPosition->get_x());
+    xPlot.AddWaypoint(Destination->get_x());
+    std::cout << givenPosition->get_x() << std::endl;
     // // Call the methods to add points.
-    yPlot.AddPosition(mouse.x * 0.0005f);
-    yPlot.AddWaypoint(mouse.y * 0.0005f);
+    yPlot.AddPosition(givenPosition->get_y());
+    yPlot.AddWaypoint(Destination->get_y());
 
     // // Call the methods to add points.
-    zPlot.AddPosition(mouse.x * 0.0005f);
-    zPlot.AddWaypoint(mouse.y * 0.0005f);
+    zPlot.AddPosition(givenPosition->get_z());
+    zPlot.AddWaypoint(Destination->get_z());
 
     // // Call the methods to add points.
-    rollPlot.AddPosition(mouse.x * 0.0005f);
-    rollPlot.AddWaypoint(mouse.y * 0.0005f);
+    rollPlot.AddPosition(givenPosition->get_roll());
+    rollPlot.AddWaypoint(Destination->get_roll());
 
     // // Call the methods to add points.
-    pitchPlot.AddPosition(mouse.x * 0.0005f);
-    pitchPlot.AddWaypoint(mouse.y * 0.0005f);
+    pitchPlot.AddPosition(givenPosition->get_pitch());
+    pitchPlot.AddWaypoint(Destination->get_pitch());
 
     // // Call the methods to add points.
-    yawPlot.AddPosition(mouse.x * 0.0005f);
-    yawPlot.AddWaypoint(mouse.y * 0.0005f);
+    yawPlot.AddPosition(givenPosition->get_yaw());
+    yawPlot.AddWaypoint(Destination->get_yaw());
+    }
 
     // Control plot properties externally with an ImGui slider.
     // ImGui::SliderFloat("History", &myPlot.History, 1, 30, "%.1f s");
