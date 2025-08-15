@@ -321,30 +321,25 @@ int DashboardGUI::Startup()
 	 Destination = ComponentStructPointer->LocationData.CurrentWaypoint.load(std::memory_order_acquire); 
 	 givenPosition = ComponentStructPointer->LocationData.CurrentPosition.load(std::memory_order_acquire);
     // // Call the methods to add points.
-    if(Destination != nullptr && givenPosition != nullptr){
+    // Check if givenPosition is valid
+if (givenPosition != nullptr) {
     xPlot.AddPosition(givenPosition->get_x());
-    xPlot.AddWaypoint(Destination->get_x());
-    std::cout << givenPosition->get_x() << std::endl;
-    // // Call the methods to add points.
     yPlot.AddPosition(givenPosition->get_y());
-    yPlot.AddWaypoint(Destination->get_y());
-
-    // // Call the methods to add points.
     zPlot.AddPosition(givenPosition->get_z());
-    zPlot.AddWaypoint(Destination->get_z());
-
-    // // Call the methods to add points.
     rollPlot.AddPosition(givenPosition->get_roll());
-    rollPlot.AddWaypoint(Destination->get_roll());
-
-    // // Call the methods to add points.
     pitchPlot.AddPosition(givenPosition->get_pitch());
-    pitchPlot.AddWaypoint(Destination->get_pitch());
-
-    // // Call the methods to add points.
     yawPlot.AddPosition(givenPosition->get_yaw());
+}
+
+// Check if Destination is valid
+if (Destination != nullptr) {
+    xPlot.AddWaypoint(Destination->get_x());
+    yPlot.AddWaypoint(Destination->get_y());
+    zPlot.AddWaypoint(Destination->get_z());
+    rollPlot.AddWaypoint(Destination->get_roll());
+    pitchPlot.AddWaypoint(Destination->get_pitch());
     yawPlot.AddWaypoint(Destination->get_yaw());
-    }
+}
 
     // Control plot properties externally with an ImGui slider.
     // ImGui::SliderFloat("History", &myPlot.History, 1, 30, "%.1f s");
