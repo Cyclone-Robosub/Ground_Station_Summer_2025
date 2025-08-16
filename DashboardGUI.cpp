@@ -190,18 +190,15 @@ int DashboardGUI::Startup()
 
         generalLogger.Render();
 
-        // Example date for 3D plotting
-        static LimitedTrajectory robot_waypoint("Desired Waypoint", 1000);
+        // Example data for 3D plotting
+        static StaticPoint robot_waypoint("Desired Waypoint");
         float waypoint_coordinates[3];
         std::shared_ptr<Position> Destination = ComponentStructPointer->LocationData.CurrentWaypoint.load(std::memory_order_acquire);
         std::shared_ptr<Position> givenPosition = ComponentStructPointer->LocationData.CurrentPosition.load(std::memory_order_acquire);
 
         if (Destination != nullptr)
         {
-            waypoint_coordinates[0] = Destination->get_x();
-            waypoint_coordinates[1] = Destination->get_y();
-            waypoint_coordinates[2] = Destination->get_z();
-            robot_waypoint.addPoint(waypoint_coordinates);
+            robot_waypoint.addPoint(Coordinate(Destination->get_x(), Destination->get_y(), Destination->get_z()));
         }
         static LimitedTrajectory robot_position("Current Position", 1000);
         float position_coordinates[3];

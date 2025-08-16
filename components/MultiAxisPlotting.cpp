@@ -1,6 +1,7 @@
 #include <vector>
 #include <algorithm> // For std::rotate
 #include <math.h>
+#include <iostream>
 
 #include "MultiAxisPlotting.hpp"
 #include "implot3d.h"
@@ -54,7 +55,58 @@ void LimitedTrajectory::addPoint(const float* coordinates) {
     zs_.push_back(coordinates[2]);
 }
 
-void plotLines(const LimitedTrajectory& robot_position, const LimitedTrajectory& waypoints) {
+Coordinate::Coordinate(float x, float y, float z) : x(x), y(y), z(z) {}
+
+float Coordinate::operator[](int value) const {
+    switch(value) {
+        case 0:
+            return get_x();
+        case 1:
+            return get_y();
+        case 2:
+            return get_z();
+        default:
+            std::cerr << "Index out of bounds! Requested: " << value << "; valid range: [0,5]." << std::endl;
+            exit(42);
+    }
+}
+
+float Coordinate::get_x() const {
+    return x;
+}
+
+float Coordinate::get_y() const {
+    return y;
+}
+
+float Coordinate::get_z() const {
+    return z;
+}
+
+bool my_float_equal(float x, float y) {
+    return (x > y) ? (x - y < 0.00001) : (y - x < 0.00001);
+}
+
+bool operator==(const Coordinate& lhs, const Coordinate& rhs) {
+    return my_float_equal(lhs.x,rhs.x) && my_float_equal(rhs.y,rhs.y) && 
+    my_float_equal(lhs.z,rhs.z);
+}
+
+bool operator!=(const Coordinate& lhs, const Coordinate& rhs) {
+    return !(lhs == rhs);
+}
+
+
+StaticPoint::StaticPoint(std::string name) : name(name), coordinate(Coordinate(0,0,0)), initialized(false) {}
+
+void StaticPoint::addPoint(const Coordinate newCoordinate) {
+    if (newCoordinate != this->coordinate) { // only replace point if it's different from the current one
+        this->coordinate = newCoordinate;
+        initialized = true;
+    }
+}
+
+void plotLines(const LimitedTrajectory& robot_position, const StaticPoint& waypoint) {
 
     ImGui::Begin("Robot Trajectory Plots");
     if (ImPlot3D::BeginPlot("Robot Position Trajectory")) {
@@ -68,8 +120,10 @@ void plotLines(const LimitedTrajectory& robot_position, const LimitedTrajectory&
         // ImPlot3D::LineWeight(2.0f);
         ImPlot3D::PlotLine("Robot Position", robot_position.getXs().data(), robot_position.getYs().data(), robot_position.getZs().data(),
                            (int)robot_position.getXs().size(), ImPlot3DLineFlags_None);
-        ImPlot3D::PlotLine("Waypoints", waypoints.getXs().data(), waypoints.getYs().data(), waypoints.getZs().data(),
-                           (int)waypoints.getXs().size(), ImPlot3DLineFlags_None);
+        ImPlot3D::SetNextMarkerStyle(ImPlot3DMarker_Circle, 4, ImPlot3D::GetColormapColor(1), IMPLOT3D_AUTO, ImPlot3D::GetColormapColor(1));
+        ImPlot3D::PushStyleVar(ImPlot3DStyleVar_FillAlpha, 0.60f);
+        ImPlot3D::PlotScatter("Waypoint", std::vector<float> {waypoint.getCoordinate()[0]}.data(), std::vector<float> {waypoint.getCoordinate()[1]}.data(), std::vector<float> {waypoint.getCoordinate()[2]}.data(),
+                           1, ImPlot3DLineFlags_None);
         ImPlot3D::EndPlot();
 
     }

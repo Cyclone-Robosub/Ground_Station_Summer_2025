@@ -22,4 +22,31 @@ private:
     std::vector<float> zs_;
 };
 
-void plotLines(const LimitedTrajectory& robot_postition, const LimitedTrajectory& waypoints);
+bool my_float_equal(float x, float y);
+
+class Coordinate {
+    public:
+        Coordinate(float x, float y, float z);
+        float operator[](int value) const;
+        friend bool operator==(const Coordinate& lhs, const Coordinate& rhs);
+        friend bool operator!=(const Coordinate& lhs, const Coordinate& rhs);
+        float get_x() const;
+        float get_y() const;
+        float get_z() const;
+    private:
+        float x, y, z;
+};
+
+class StaticPoint {
+    public:
+        StaticPoint(std::string name);
+        void addPoint(const Coordinate coordinate);
+        Coordinate getCoordinate() const { return coordinate; }
+        bool is_initialized() const { return initialized; }
+    private:
+        std::string name;
+        Coordinate coordinate;
+        bool initialized;
+};
+
+void plotLines(const LimitedTrajectory& robot_postition, const StaticPoint& waypoint);
