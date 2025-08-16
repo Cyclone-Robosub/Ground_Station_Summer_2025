@@ -51,15 +51,22 @@ struct ManipulationStruct
 {
     std::atomic<int> ManipulationCode;
 };
-struct CL_Tool_Struct
-{
-    std::mutex CLToolDataMutex;
-    std::shared_ptr<float[]> x_axis_array;
-    std::shared_ptr<float[]> y_axis_array;
-    std::shared_ptr<float[]> z_axis_array;
-    std::shared_ptr<float[]> roll_array;
-    std::shared_ptr<float[]> pitch_array;
-    std::shared_ptr<float[]> yaw_array;
+
+
+class PID_Component{
+    public:
+    PID_Component(const std::string& n, float v) : name(n), value(v) {}
+    PID_Component() = default;
+    // Explicitly delete copy constructor and assignment operator to prevent copies.
+    PID_Component(const PID_Component&) = delete;
+    PID_Component& operator=(const PID_Component&) = delete;
+     std::string name;
+    std::mutex mutex;
+    float value;
+};
+struct Axis{
+    std::array<std::shared_ptr<PID_Component>, 8> PID_Components;
+    std::string name;
 };
 struct StructofComponents
 {
@@ -74,5 +81,56 @@ struct StructofComponents
     };
     LocationStruct LocationData;
     ThrustStruct ThrustData;
-    CL_Tool_Struct CLToolData;
+   std::array<Axis, 6> Axes =
+       {
+            Axis{{ std::make_shared<PID_Component>("p", 1.0f),
+                   std::make_shared<PID_Component>("i", 0.05f),
+                   std::make_shared<PID_Component>("d", 0.5f),
+                   std::make_shared<PID_Component>("i_max", 1000.0f),
+                   std::make_shared<PID_Component>("limits", 0.5f),
+                   std::make_shared<PID_Component>("lower_tolerances", 0.05f),
+                   std::make_shared<PID_Component>("upper_tolerances", 0.1f),
+                   std::make_shared<PID_Component>("hold_time", 5.0f) }, "X-Axis"},
+            Axis{{ std::make_shared<PID_Component>("p", 1.0f),
+                   std::make_shared<PID_Component>("i", 0.05f),
+                   std::make_shared<PID_Component>("d", 0.5f),
+                   std::make_shared<PID_Component>("i_max", 1000.0f),
+                   std::make_shared<PID_Component>("limits", 0.5f),
+                   std::make_shared<PID_Component>("lower_tolerances", 0.05f),
+                   std::make_shared<PID_Component>("upper_tolerances", 0.1f),
+                   std::make_shared<PID_Component>("hold_time", 5.0f) }, "Y-Axis"},
+            Axis{{ std::make_shared<PID_Component>("p", 1.0f),
+                   std::make_shared<PID_Component>("i", 0.05f),
+                   std::make_shared<PID_Component>("d", 0.5f),
+                   std::make_shared<PID_Component>("i_max", 1000.0f),
+                   std::make_shared<PID_Component>("limits", 0.5f),
+                   std::make_shared<PID_Component>("lower_tolerances", 0.05f),
+                   std::make_shared<PID_Component>("upper_tolerances", 0.1f),
+                   std::make_shared<PID_Component>("hold_time", 5.0f) }, "Z-Axis"},
+            Axis{{ std::make_shared<PID_Component>("p", 0.005f),
+                   std::make_shared<PID_Component>("i", 0.0005f),
+                   std::make_shared<PID_Component>("d", 0.005f),
+                   std::make_shared<PID_Component>("i_max", 100.0f),
+                   std::make_shared<PID_Component>("limits", 1.0f),
+                   std::make_shared<PID_Component>("lower_tolerances", 5.0f),
+                   std::make_shared<PID_Component>("upper_tolerances", 10.0f),
+                   std::make_shared<PID_Component>("hold_time", 5.0f) }, "Roll"},
+            Axis{{ std::make_shared<PID_Component>("p", 0.005f),
+                   std::make_shared<PID_Component>("i", 0.0005f),
+                   std::make_shared<PID_Component>("d", 0.005f),
+                   std::make_shared<PID_Component>("i_max", 100.0f),
+                   std::make_shared<PID_Component>("limits", 1.0f),
+                   std::make_shared<PID_Component>("lower_tolerances", 5.0f),
+                   std::make_shared<PID_Component>("upper_tolerances", 10.0f),
+                   std::make_shared<PID_Component>("hold_time", 5.0f) }, "Pitch"},
+            Axis{{ std::make_shared<PID_Component>("p", 0.5f),
+                   std::make_shared<PID_Component>("i", 0.05f),
+                   std::make_shared<PID_Component>("d", 0.05f),
+                   std::make_shared<PID_Component>("i_max", 100.0f),
+                   std::make_shared<PID_Component>("limits", 0.25f),
+                   std::make_shared<PID_Component>("lower_tolerances", 5.0f),
+                   std::make_shared<PID_Component>("upper_tolerances", 10.0f),
+                   std::make_shared<PID_Component>("hold_time", 5.0f) }, "Yaw"}
+        };
+
 };

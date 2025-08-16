@@ -13,6 +13,7 @@
 #include "components/ConfigurationPanel.hpp"
 #include "components/MultiAxisPlotting.hpp"
 #include "components/SingleAxisPlotting.hpp"
+#include "components/Inputbox.cpp"
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -75,7 +76,7 @@ int DashboardGUI::Startup()
 
     // Create window with graphics context
     float main_scale = ImGui_ImplGlfw_GetContentScaleForMonitor(glfwGetPrimaryMonitor()); // Valid on GLFW 3.3+ only
-    GLFWwindow *window = glfwCreateWindow((int)(1280 * main_scale), (int)(800 * main_scale), "Dear ImGui GLFW+OpenGL3 example", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow((int)(1280 * main_scale), (int)(800 * main_scale), "Cyclone Dashboard", nullptr, nullptr);
     if (window == nullptr)
         return 1;
     glfwMakeContextCurrent(window);
@@ -423,30 +424,10 @@ int DashboardGUI::Startup()
         RenderConfigurationPanel(io, show_demo_window, show_demo_plots, show_demo_3dplot, dark_mode);
 
         // PID Input
-        static GenericInputWidget widget("My Custom Input Widget");
-
-        // Initialize with some default fields (only once)
-        static bool initialized = false;
-        if (!initialized)
-        {
-            widget.AddField("Temperature (°C)", InputFilters::Float);
-            widget.AddField("Count", InputFilters::Integer);
-            widget.AddField("Name", InputFilters::Alphanumeric);
-            initialized = true;
-        }
-
+        static GenericInputWidget widget("PID Input Tuner Window", std::make_shared<std::array<Axis, 6>>(ComponentStructPointer->Axes));
         // Render the widget
         widget.Render();
 
-        // Example of accessing values
-        if (ImGui::Begin("Value Monitor"))
-        {
-            ImGui::Text("Monitoring %zu fields:", widget.GetFieldCount());
-            for (size_t i = 0; i < widget.GetFieldCount(); ++i)
-            {
-                ImGui::Text("Field %zu: '%s'", i, widget.GetFieldValue(i).c_str());
-            }
-        }
         ImGui::End();
 
         // Rendering

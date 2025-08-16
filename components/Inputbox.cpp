@@ -4,52 +4,65 @@
 #include <functional>
 #include <cctype>
 #include <algorithm>
-
+#include <climits>
+#include <memory>
+#include <iostream>
+#include "../DashboardGUI.hpp"
 // Generic input filter function type
 using InputFilter = std::function<bool(char)>;
 
 // Predefined filters
-namespace InputFilters {
+namespace InputFilters
+{
     // Float filter: allows digits, decimal point, minus sign, and 'e'/'E' for scientific notation
-    static InputFilter Float = [](char c) {
+    static InputFilter Float = [](char c)
+    {
         return std::isdigit(c) || c == '.' || c == '-' || c == '+' ||
                c == 'e' || c == 'E' || c == '\b' || c == '\x7f';
     };
 
     // Integer filter: allows digits and minus sign
-    static InputFilter Integer = [](char c) {
+    static InputFilter Integer = [](char c)
+    {
         return std::isdigit(c) || c == '-' || c == '+' || c == '\b' || c == '\x7f';
     };
 
     // Alphanumeric filter
-    static InputFilter Alphanumeric = [](char c) {
+    static InputFilter Alphanumeric = [](char c)
+    {
         return std::isalnum(c) || c == '\b' || c == '\x7f';
     };
 
     // No filter (allows everything)
-    static InputFilter None = [](char c) { return true; };
+    static InputFilter None = [](char c)
+    { return true; };
 }
 
 // Input field data structure
-struct InputField {
+struct InputField
+{
     std::string descriptor;
     std::string value;
     InputFilter filter;
     size_t maxLength;
 
-    InputField(const std::string& desc, const InputFilter& filt = InputFilters::None, size_t maxLen = 256)
-        : descriptor(desc), filter(filt), maxLength(maxLen) {
+    InputField(const std::string &desc, const InputFilter &filt = InputFilters::None, size_t maxLen = 256)
+        : descriptor(desc), filter(filt), maxLength(maxLen)
+    {
         value.reserve(maxLength);
     }
 };
 
 // Custom input text callback for filtering
-static int InputTextFilterCallback(ImGuiInputTextCallbackData* data) {
-    InputField* field = static_cast<InputField*>(data->UserData);
+static int InputTextFilterCallback(ImGuiInputTextCallbackData *data)
+{
+    InputField *field = static_cast<InputField *>(data->UserData);
 
-    if (data->EventFlag == ImGuiInputTextFlags_CallbackCharFilter) {
+    if (data->EventFlag == ImGuiInputTextFlags_CallbackCharFilter)
+    {
         // Apply the filter
-        if (!field->filter(data->EventChar)) {
+        if (!field->filter(data->EventChar))
+        {
             return 1; // Reject the character
         }
     }
@@ -58,131 +71,85 @@ static int InputTextFilterCallback(ImGuiInputTextCallbackData* data) {
 }
 
 // Main widget class
-class GenericInputWidget {
+class GenericInputWidget
+{
 private:
     std::vector<InputField> fields;
     std::string windowTitle;
     bool isOpen;
     ImVec2 windowSize;
+    std::shared_ptr<std::array<Axis, 6>> Axes_ptr;
 
 public:
-    GenericInputWidget(const std::string& title = "Input Widget")
-        : windowTitle(title), isOpen(true), windowSize(400, 300) {}
+    GenericInputWidget(const std::string &title = "Input Widget", std::shared_ptr<std::array<Axis, 6>> givenAxes_ptr = nullptr)
+        : windowTitle(title), isOpen(true), windowSize(800, 500), Axes_ptr(givenAxes_ptr) {}
 
     // Add a new input field
-    void AddField(const std::string& descriptor, const InputFilter& filter = InputFilters::None, size_t maxLength = 256) {
-        fields.emplace_back(descriptor, filter, maxLength);
+    void AddField(const std::string &descriptor, const InputFilter &filter = InputFilters::None, size_t maxLength = 256)
+    {
     }
 
     // Remove a field by index
-    void RemoveField(size_t index) {
-        if (index < fields.size()) {
-            fields.erase(fields.begin() + index);
-        }
+    void RemoveField(size_t index)
+    {
     }
 
     // Clear all fields
-    void ClearFields() {
-        fields.clear();
-    }
-
-    // Get field value by index
-    const std::string& GetFieldValue(size_t index) const {
-        static const std::string empty;
-        return (index < fields.size()) ? fields[index].value : empty;
-    }
-
-    // Set field value by index
-    void SetFieldValue(size_t index, const std::string& value) {
-        if (index < fields.size()) {
-            fields[index].value = value;
-        }
-    }
-
-    // Get number of fields
-    size_t GetFieldCount() const {
-        return fields.size();
+    void ClearFields()
+    {
     }
 
     // Render the widget
-    bool Render() {
-        if (!isOpen) return false;
+    bool Render()
+    {
+        if (!isOpen)
+            return false;
 
         ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
 
-        if (!ImGui::Begin(windowTitle.c_str(), &isOpen)) {
+        if (!ImGui::Begin(windowTitle.c_str(), &isOpen))
+        {
             ImGui::End();
             return isOpen;
         }
 
         // Render input fields
-        for (size_t i = 0; i < fields.size(); ++i) {
-            ImGui::PushID(static_cast<int>(i));
+        int b = 0;
+        for (Axis axis : (*Axes_ptr))
+        {
+            if (ImGui::CollapsingHeader(axis.name.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+            {
+                for (size_t i = 0; i < axis.PID_Components.size(); ++i)
+                {
+                    ImGui::PushID(static_cast<int>(b));
 
-            // Create a unique label for each field
-            std::string label = fields[i].descriptor + "##" + std::to_string(i);
+                    // Create a unique label for each field
+                    std::string label = axis.PID_Components[i]->name + "##" + std::to_string(i);
+                    char givenValue[256];
+                    std::unique_lock<std::mutex> UniqueLock(axis.PID_Components[i]->mutex);
+                    snprintf(givenValue, sizeof(givenValue), "%.3f", axis.PID_Components[i]->value);
 
-            // Resize the value string buffer if needed
-            if (fields[i].value.capacity() < fields[i].maxLength) {
-                fields[i].value.reserve(fields[i].maxLength);
-            }
+// Release the lock before calling ImGui to avoid holding it during user interaction.
+                    
+                    if (ImGui::InputText(axis.PID_Components[i]->name.c_str(), givenValue, sizeof(givenValue), ImGuiInputTextFlags_EnterReturnsTrue))
+                    {
+                        // Convert string to float on Enter
+                        float temp_value = 0.0f;
+                        if (sscanf(givenValue, "%f", &temp_value) == 1)
+                        {
+                            // Only update if the conversion was successful
+                            axis.PID_Components[i]->value = temp_value;
+                        }
+                    }
 
-            // Render the input field with filtering
-            if (ImGui::InputText(label.c_str(),
-                               &fields[i].value[0],
-                               fields[i].maxLength,
-                               ImGuiInputTextFlags_CallbackCharFilter | ImGuiInputTextFlags_CallbackResize,
-                               InputTextFilterCallback,
-                               &fields[i])) {
-                // Handle string resizing for C++ strings
-                fields[i].value = std::string(fields[i].value.c_str());
-            }
-
-            // Add remove button for each field
-            ImGui::SameLine();
-            if (ImGui::Button(("Remove##" + std::to_string(i)).c_str())) {
-                RemoveField(i);
-                ImGui::PopID();
-                break; // Exit loop since we modified the vector
-            }
-
-            ImGui::PopID();
-        }
-
-        // Add separator before control buttons
-        if (!fields.empty()) {
-            ImGui::Separator();
-        }
-
-        // Control buttons
-        if (ImGui::Button("Add Float Field")) {
-            AddField("Float " + std::to_string(fields.size() + 1), InputFilters::Float);
-        }
-
-        ImGui::SameLine();
-        if (ImGui::Button("Add Integer Field")) {
-            AddField("Integer " + std::to_string(fields.size() + 1), InputFilters::Integer);
-        }
-
-        ImGui::SameLine();
-        if (ImGui::Button("Add Text Field")) {
-            AddField("Text " + std::to_string(fields.size() + 1), InputFilters::Alphanumeric);
-        }
-
-        if (ImGui::Button("Clear All")) {
-            ClearFields();
-        }
-
-        // Display current values (for debugging/demonstration)
-        if (!fields.empty()) {
-            ImGui::Separator();
-            ImGui::Text("Current Values:");
-            for (size_t i = 0; i < fields.size(); ++i) {
-                ImGui::Text("%s: %s", fields[i].descriptor.c_str(), fields[i].value.c_str());
+                    ImGui::PopID();
+                    b++;
+		   UniqueLock.unlock(); 
+                }
             }
         }
-
-        ImGui::End();
+        if (ImGui::Begin(windowTitle.c_str(), &isOpen))
+            ImGui::End();
         return isOpen;
     }
 
@@ -193,7 +160,7 @@ public:
     void SetOpen(bool open) { isOpen = open; }
 
     // Set window title
-    void SetTitle(const std::string& title) { windowTitle = title; }
+    void SetTitle(const std::string &title) { windowTitle = title; }
 };
 
 // Example usage function
