@@ -4,7 +4,7 @@
 #include <functional>
 #include <cctype>
 #include <algorithm>
-
+#include <iostream>
 // Generic input filter function type
 using InputFilter = std::function<bool(char)>;
 
@@ -94,6 +94,7 @@ public:
 
     // Set field value by index
     void SetFieldValue(size_t index, const std::string& value) {
+        std::cout << "HERE" <<std::endl;
         if (index < fields.size()) {
             fields[index].value = value;
         }
