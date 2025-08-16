@@ -3,7 +3,7 @@
 #include <memory>
 #include <mutex>
 #include <vector>
-#include "../crs_common/position/position.hpp"
+#include "include/crs_common/position/position.hpp"
 
 
 
@@ -51,7 +51,16 @@ struct ManipulationStruct
 {
     std::atomic<int> ManipulationCode;
 };
-
+struct CL_Tool_Struct
+{
+    std::mutex CLToolDataMutex;
+    std::shared_ptr<float[]> x_axis_array;
+    std::shared_ptr<float[]> y_axis_array;
+    std::shared_ptr<float[]> z_axis_array;
+    std::shared_ptr<float[]> roll_array;
+    std::shared_ptr<float[]> pitch_array;
+    std::shared_ptr<float[]> yaw_array;
+};
 struct StructofComponents
 {
     BatteryStruct BatteryData;
@@ -65,4 +74,5 @@ struct StructofComponents
     };
     LocationStruct LocationData;
     ThrustStruct ThrustData;
+    CL_Tool_Struct CLToolData;
 };

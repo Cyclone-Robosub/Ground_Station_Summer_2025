@@ -51,13 +51,17 @@ void RealTimePlot::Render(const char* title) {
         ImPlot::SetupAxisLimits(ImAxis_Y1, 0, 1);
 
         // Ensure there's data to plot to avoid crashes.
-        if (!DataX.Data.empty() && !DataY.Data.empty()) {
+        if (!DataX.Data.empty())             {
             // Plot the data from the public buffers.
             ImPlot::SetNextFillStyle(IMPLOT_AUTO_COL, 0.5f);
             ImPlot::PlotShaded("Position", &DataX.Data[0].x, &DataX.Data[0].y, DataX.Data.size(), -INFINITY, 0, DataX.Offset, sizeof(ImVec2));
-            ImPlot::PlotLine("Waypoints", &DataY.Data[0].x, &DataY.Data[0].y, DataY.Data.size(), 0, DataY.Offset, sizeof(ImVec2));
         }
-        
+        if (!DataY.Data.empty()) {
+            ImPlot::SetNextFillStyle(IMPLOT_AUTO_COL, 0.5f);
+            ImPlot::PlotLine("Waypoints", &DataY.Data[0].x, &DataY.Data[0].y, DataY.Data.size(), 0, DataY.Offset, sizeof(ImVec2));
+            
+        }            
+
         ImPlot::EndPlot();
     }
 }
