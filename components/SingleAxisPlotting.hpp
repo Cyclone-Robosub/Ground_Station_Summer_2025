@@ -19,25 +19,28 @@ struct ScrollingBuffer {
 
 // A class to encapsulate the plot's data and rendering logic.
 class RealTimePlot {
-private:
-    // This is the internal clock for the plot.
-    float CurrentTime = 0.0f; 
-
-public:
+    
+    public:
     // Data buffers for the plot series.
+    RealTimePlot(const double axis_min = 0, const double axis_max = 1);
+
     ScrollingBuffer DataX;
     ScrollingBuffer DataY;
-
+    
     // Public properties to control the plot's appearance.
     float History = 10.0f;
     ImPlotAxisFlags X_AxisFlags = ImPlotAxisFlags_NoTickLabels;
-    ImPlotAxisFlags Y_AxisFlags = ImPlotAxisFlags_NoTickLabels;
-
-    // Constructor declaration
-    RealTimePlot();
-
+    ImPlotAxisFlags Y_AxisFlags = ImPlotAxisFlags_None;
+        
     // Method declarations
     void AddPosition(float value);
     void AddWaypoint(float value);
     void Render(const char* title);
+
+private:
+    // This is the internal clock for the plot.
+    float CurrentTime_ = 0.0f; 
+    double AxisMin_ = 0.0;
+    double AxisMax_ = 1.0;
+
 };
