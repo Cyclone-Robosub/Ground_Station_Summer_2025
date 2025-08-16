@@ -30,7 +30,7 @@ class RealTimePlot {
     // Public properties to control the plot's appearance.
     float History = 10.0f;
     ImPlotAxisFlags X_AxisFlags = ImPlotAxisFlags_NoTickLabels;
-    ImPlotAxisFlags Y_AxisFlags = ImPlotAxisFlags_NoTickLabels;
+    ImPlotAxisFlags Y_AxisFlags = ImPlotAxisFlags_None;
         
     // Method declarations
     void AddPosition(float value);
