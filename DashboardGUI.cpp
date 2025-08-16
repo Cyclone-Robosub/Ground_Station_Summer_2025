@@ -310,9 +310,9 @@ int DashboardGUI::Startup()
         static RealTimePlot xPlot(-5, 5);
         static RealTimePlot yPlot(-5, 5);
         static RealTimePlot zPlot(0, 2);
-        static RealTimePlot rollPlot(-M_PI, M_PI);
-        static RealTimePlot pitchPlot(-M_PI, M_PI);
-        static RealTimePlot yawPlot(-M_PI, M_PI);
+        static RealTimePlot rollPlot(-180, 180);
+        static RealTimePlot pitchPlot(-180, 180);
+        static RealTimePlot yawPlot(0, 360);
 
         Destination = ComponentStructPointer->LocationData.CurrentWaypoint.load(std::memory_order_acquire);
         givenPosition = ComponentStructPointer->LocationData.CurrentPosition.load(std::memory_order_acquire);
