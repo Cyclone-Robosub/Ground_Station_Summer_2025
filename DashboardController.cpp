@@ -90,53 +90,57 @@ void DashboardController::Controller()
         {
             i.status = Standby;
         }
+    }
         //DO REGARDLESS
         auto msg = std_msgs::msg::Float32MultiArray();
         msg.data.resize(8);
-        if(ComponentStruct->CLToolData.CLToolDataMutex.try_lock()){
-        if(ComponentStruct->CLToolData.x_axis_array != nullptr){
-            for(int i = 0; i < 8; i++){
-                msg.data[i] = ComponentStruct->CLToolData.x_axis_array[i];
-            }
-            X_Axis_Publisher->publish(msg);
+        Axis axis = ComponentStruct->Axes[0];
+        for(int i = 0; i < 8; i++){
+                std::lock_guard<std::mutex> lk(axis.PID_Components[i]->mutex);
+                msg.data[i] = axis.PID_Components[i]->value;
         }
-        if(ComponentStruct->CLToolData.y_axis_array != nullptr){
-            for(int i = 0; i < 8; i++){
-               msg.data[i] = ComponentStruct->CLToolData.y_axis_array[i];
-            }
-            Y_Axis_Publisher->publish(msg);
+        X_Axis_Publisher->publish(msg);
+    
+        axis = ComponentStruct->Axes[1];
+        for(int i = 0; i < 8; i++){
+                std::lock_guard<std::mutex> lk(axis.PID_Components[i]->mutex);
+                msg.data[i] = axis.PID_Components[i]->value;
         }
-        if(ComponentStruct->CLToolData.z_axis_array != nullptr){
-            for(int i = 0; i < 8; i++){
-               msg.data[i] = ComponentStruct->CLToolData.z_axis_array[i];
-            }
-            Z_Axis_Publisher->publish(msg);
+        Y_Axis_Publisher->publish(msg);
+    
+        axis = ComponentStruct->Axes[2];
+        for(int i = 0; i < 8; i++){
+                std::lock_guard<std::mutex> lk(axis.PID_Components[i]->mutex);
+                msg.data[i] = axis.PID_Components[i]->value;
         }
-        if(ComponentStruct->CLToolData.roll_array != nullptr){
-            for(int i = 0; i < 8; i++){
-               msg.data[i] = ComponentStruct->CLToolData.roll_array[i];
-            }
-            ROLL_Axis_Publisher->publish(msg);
+        Z_Axis_Publisher->publish(msg);
+    
+        axis = ComponentStruct->Axes[3];
+        for(int i = 0; i < 8; i++){
+                std::lock_guard<std::mutex> lk(axis.PID_Components[i]->mutex);
+                msg.data[i] = axis.PID_Components[i]->value;
         }
-        if(ComponentStruct->CLToolData.pitch_array != nullptr){
-            for(int i = 0; i < 8; i++){
-               msg.data[i] = ComponentStruct->CLToolData.pitch_array[i];
-            }
-            PITCH_Axis_Publisher->publish(msg);
+        ROLL_Axis_Publisher->publish(msg);
+    
+        axis = ComponentStruct->Axes[4];
+        for(int i = 0; i < 8; i++){
+                std::lock_guard<std::mutex> lk(axis.PID_Components[i]->mutex);
+                msg.data[i] = axis.PID_Components[i]->value;
         }
-        if(ComponentStruct->CLToolData.yaw_array != nullptr){
-            for(int i = 0; i < 8; i++){
-               msg.data[i] = ComponentStruct->CLToolData.yaw_array[i];
-            }
-            YAW_Axis_Publisher->publish(msg);
+        PITCH_Axis_Publisher->publish(msg);
+    
+        axis = ComponentStruct->Axes[5];
+        for(int i = 0; i < 8; i++){
+                std::lock_guard<std::mutex> lk(axis.PID_Components[i]->mutex);
+                msg.data[i] = axis.PID_Components[i]->value;
         }
-        ComponentStruct->CLToolData.CLToolDataMutex.unlock();
+        YAW_Axis_Publisher->publish(msg);
+   
     }
-    }
-    }
+}
 
     //
-}
+
 void DashboardController::getSOC(const std_msgs::msg::Float64::SharedPtr msg)
 {
     ComponentStruct->BatteryData.SOC.store(msg->data, std::memory_order_release);
