@@ -13,12 +13,14 @@
 #include "components/ConfigurationPanel.hpp"
 #include "components/MultiAxisPlotting.hpp"
 #include "components/SingleAxisPlotting.hpp"
+#include "components/Inputbox.cpp"
 #include <string>
 #include <vector>
 #include <algorithm>
 #include <iomanip>
 #include <sstream>
 #include <ctime>
+#include <math.h>
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
 // To link with VS2010-era libraries, VS2015+ requires linking with legacy_stdio_definitions.lib, which we do using this pragma.
 // Your own project should not be affected, as you are likely to link with a newer binary of GLFW that is adequate for your version of Visual Studio.
@@ -305,12 +307,12 @@ int DashboardGUI::Startup()
 
         ImVec2 mouse = ImGui::GetMousePos();
 
-        static RealTimePlot xPlot;
-        static RealTimePlot yPlot;
-        static RealTimePlot zPlot;
-        static RealTimePlot rollPlot;
-        static RealTimePlot pitchPlot;
-        static RealTimePlot yawPlot;
+        static RealTimePlot xPlot(-5, 5);
+        static RealTimePlot yPlot(-5, 5);
+        static RealTimePlot zPlot(0, 2);
+        static RealTimePlot rollPlot(-M_PI, M_PI);
+        static RealTimePlot pitchPlot(-M_PI, M_PI);
+        static RealTimePlot yawPlot(-M_PI, M_PI);
 
         Destination = ComponentStructPointer->LocationData.CurrentWaypoint.load(std::memory_order_acquire);
         givenPosition = ComponentStructPointer->LocationData.CurrentPosition.load(std::memory_order_acquire);
@@ -419,30 +421,10 @@ int DashboardGUI::Startup()
         RenderConfigurationPanel(io, show_demo_window, show_demo_plots, show_demo_3dplot, dark_mode);
 
         // PID Input
-        static GenericInputWidget widget("My Custom Input Widget");
-
-        // Initialize with some default fields (only once)
-        static bool initialized = false;
-        if (!initialized)
-        {
-            widget.AddField("Temperature (°C)", InputFilters::Float);
-            widget.AddField("Count", InputFilters::Integer);
-            widget.AddField("Name", InputFilters::Alphanumeric);
-            initialized = true;
-        }
-
+        static GenericInputWidget widget("PID Input Tuner Window", std::make_shared<std::array<Axis, 6>>(ComponentStructPointer->Axes));
         // Render the widget
         widget.Render();
 
-        // Example of accessing values
-        if (ImGui::Begin("Value Monitor"))
-        {
-            ImGui::Text("Monitoring %zu fields:", widget.GetFieldCount());
-            for (size_t i = 0; i < widget.GetFieldCount(); ++i)
-            {
-                ImGui::Text("Field %zu: '%s'", i, widget.GetFieldValue(i).c_str());
-            }
-        }
         ImGui::End();
 
         // Rendering
