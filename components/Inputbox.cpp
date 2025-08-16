@@ -130,22 +130,21 @@ public:
                     snprintf(givenValue, sizeof(givenValue), "%.3f", axis.PID_Components[i]->value);
 
 // Release the lock before calling ImGui to avoid holding it during user interaction.
-             UniqueLock.unlock();
                     
-                    if (ImGui::InputText("##PIDValue", givenValue, sizeof(givenValue), ImGuiInputTextFlags_EnterReturnsTrue))
+                    if (ImGui::InputText(axis.PID_Components[i]->name.c_str(), givenValue, sizeof(givenValue), ImGuiInputTextFlags_EnterReturnsTrue))
                     {
                         // Convert string to float on Enter
                         float temp_value = 0.0f;
                         if (sscanf(givenValue, "%f", &temp_value) == 1)
                         {
                             // Only update if the conversion was successful
-                            std::lock_guard<std::mutex> lock(axis.PID_Components[i]->mutex);
                             axis.PID_Components[i]->value = temp_value;
                         }
                     }
 
                     ImGui::PopID();
                     b++;
+		   UniqueLock.unlock(); 
                 }
             }
         }
