@@ -129,14 +129,14 @@ public:
                     std::unique_lock<std::mutex> UniqueLock(axis.PID_Components[i]->mutex);
                     snprintf(givenValue, sizeof(givenValue), "%.3f", axis.PID_Components[i]->value);
 
-// Release the lock before calling ImGui to avoid holding it during user interaction.
-                    
+                   UniqueLock.unlock(); 
                     if (ImGui::InputText(axis.PID_Components[i]->name.c_str(), givenValue, sizeof(givenValue), ImGuiInputTextFlags_EnterReturnsTrue))
                     {
                         // Convert string to float on Enter
                         float temp_value = 0.0f;
                         if (sscanf(givenValue, "%f", &temp_value) == 1)
                         {
+				std::lock_guard<std::mutex> Lock(axis.PID_Components[i]->mutex);
                             // Only update if the conversion was successful
                             axis.PID_Components[i]->value = temp_value;
                         }
@@ -144,7 +144,6 @@ public:
 
                     ImGui::PopID();
                     b++;
-		   UniqueLock.unlock(); 
                 }
             }
         }
