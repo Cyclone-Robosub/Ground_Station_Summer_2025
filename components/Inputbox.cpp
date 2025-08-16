@@ -126,10 +126,16 @@ public:
                     // Create a unique label for each field
                     std::string label = axis.PID_Components[i]->name + "##" + std::to_string(i);
                     char givenValue[256];
+                    std::unique_lock<std::mutex> UniqueLock(axis.PID_Components[i]->mutex);
+                    snprintf(givenValue, sizeof(givenValue), "%.3f", axis.PID_Components[i]->value);
+
+// Release the lock before calling ImGui to avoid holding it during user interaction.
+             UniqueLock.unlock();
+                    
                     if (ImGui::InputText("##PIDValue", givenValue, sizeof(givenValue), ImGuiInputTextFlags_EnterReturnsTrue))
                     {
                         // Convert string to float on Enter
-                        float temp_value;
+                        float temp_value = 0.0f;
                         if (sscanf(givenValue, "%f", &temp_value) == 1)
                         {
                             // Only update if the conversion was successful
