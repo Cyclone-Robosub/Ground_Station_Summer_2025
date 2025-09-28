@@ -1,5 +1,5 @@
 # Ground Station - Beta
-This is a DearImGUI implementation that allows for Ethernet or Wifi real-time data visualization and control of the AUV during the 2024-2025 season. For now, control of the AUV is limited to the ability to change the PID constants during or before the run. 
+This is a DearImGUI implementation that allows for Ethernet or Wifi connection to the AUV for real-time data visualization and control of the AUV during the 2024-2025 season. For now, control of the AUV is limited to the ability to change the PID constants during or before the run. 
 ## Running the Program
 Make sure that you have sourced ROS
 ```bash
